@@ -153,6 +153,8 @@ def main():
         """
         result = create_word_doc(formattedCode, outfile)
         print(f'Macro saved to {outfile}')
+    elif args.language == 'ps1':
+        outfile = f'{args.output}.ps1'
 
     if args.postprocessors:
         postprocessorsList = args.postprocessors.split(',')
