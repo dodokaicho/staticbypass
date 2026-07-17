@@ -74,7 +74,7 @@ pip install -r requirements.txt
 
 | Preprocessor  | C  | C# | PowerShell | VBA | Description |
 |:-------------:|:--:|:--:|:----------:|:---:|:-----------:|
-| mkpivm64      | ✅ | ✅ | ✅ | ✅ | Virtualize shellcode for obfuscation (requires template with RWX) |
+| mkpivm64      | ✅ | ✅ | ✅ | ✅ | Virtualize shellcode for obfuscation (requires template with RWX) by @D7EAD |
 
 | Transformer   | C  | C# | PowerShell | VBA | Description |
 |:-------------:|:--:|:--:|:----------:|:---:|:-----------:|
@@ -107,6 +107,8 @@ pip install -r requirements.txt
 | Postprocessor | C  | C# | PowerShell | VBA | Description |
 |:-------------:|:--:|:--:|:----------:|:---:|:-----------:|
 | strip         | ✅ | ✅ | ❌ | ❌ | Strips symbols from executable |
+| obfell        | ❌ | ❌ | ✅ | ❌ | Powershell obfuscator by @Jael-G |
+| strip         | ❌ | ❌ | ✅ | ❌ | Powershell obfuscator by @bobby-tablez |
 
 
 ## Project Structure
