@@ -11,12 +11,11 @@ class mkpivm64:
             f.write(shellcode)
         outtf, outfilename = tempfile.mkstemp()
         if platform.system() == 'Linux':
-            result = subprocess.run(['wine', './c/bin/mkpivm64.exe', f'{filename}', '-o', f'{outfilename}'])
+            result = subprocess.run(['wine', './bin/mkpivm64.exe', f'{filename}', '-o', f'{outfilename}'])
         else:
-            result = subprocess.run(['./c/bin/mkpivm64.exe', f'{filename}', '-o', f'{outfilename}'])
+            result = subprocess.run(['./bin/mkpivm64.exe', f'{filename}', '-o', f'{outfilename}'])
         if result.returncode == 0:
             output = os.fdopen(outtf, 'rb').read()
         os.remove(filename)
         os.remove(outfilename)
         return output
-            
