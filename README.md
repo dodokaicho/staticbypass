@@ -36,6 +36,10 @@ pip install -r requirements.txt
 
 ## Currently Implemented
 
+| Preprocessor  | C  | C# | PowerShell | VBA | Description |
+|:-------------:|:--:|:--:|:----------:|:---:|:-----------:|
+| mkpivm64      | ✅ | ❌ | ❌ | ❌ | Virtualize shellcode for obfuscation |
+
 | Transformer   | C  | C# | PowerShell | VBA | Description |
 |:-------------:|:--:|:--:|:----------:|:---:|:-----------:|
 | AESEncrypt    | ✅ | ✅ | ✅ | ❌ | AES Encryption |
@@ -60,6 +64,7 @@ pip install -r requirements.txt
 | shellcoderunner | ✅ | ✅ | ✅ | ✅ | Simple shellcode runner using CreateThread |
 | processhollow   | ✅ | ✅ | ✅ | ✅ | Process hollowing template targeting svchost.exe |
 | processinject   | ✅ | ❌ | ❌ | ❌ | Search for explorer.exe and create a remote thread |
+| threadhijack    | ✅ | ❌ | ❌ | ❌ | Hijack running thread in existing process |
 | bzip2           | ✅ | ❌ | ❌ | ❌ | Process hollowing using legitimate bzip2 code as cover |
 | sqlite3         | ✅ | ❌ | ❌ | ❌ | Process hollowing using legitimate sqlite3 code as cover |
 

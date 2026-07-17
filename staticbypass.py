@@ -16,12 +16,13 @@ except:
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--transformers", type=str, required=False)
-    parser.add_argument("--shellcode", type=str, required=True)
-    parser.add_argument("--template", type=str, required=True)
-    parser.add_argument("--language", type=str, required=True)
-    parser.add_argument("--obfuscator", type=str, required=False)
-    parser.add_argument("--output", type=str, required=False, default="output")
+    parser.add_argument('-e', "--transformers", type=str, required=False)
+    parser.add_argument('-s', "--shellcode", type=str, required=True)
+    parser.add_argument('-t', "--template", type=str, required=True)
+    parser.add_argument('-l', "--language", type=str, required=True)
+    parser.add_argument('-f', "--obfuscator", type=str, required=False)
+    parser.add_argument('-p', "--preprocessors", type=str, required=False)
+    parser.add_argument('-o', "--output", type=str, required=False, default="output")
     args = parser.parse_args()
 
     shellcode = open(args.shellcode, 'rb').read()
@@ -40,6 +41,18 @@ def main():
     imports = []
 
     # Transform shellcode
+
+    if args.preprocessors:
+        preprocessorsList = args.preprocessors.split(',')
+        for preprocessorItem in preprocessorsList:
+            preprocessorSpec = importlib.util.spec_from_file_location(preprocessorItem, f'{args.language}/preprocessors/{preprocessorItem}.py')
+            preprocessorModule = importlib.util.module_from_spec(preprocessorSpec)
+            sys.modules[preprocessorSpec.name] = preprocessorModule 
+            preprocessorSpec.loader.exec_module(preprocessorModule)
+            prprocessorObject = getattr(preprocessorModule, preprocessorItem)()
+            preprocessorFunction = getattr(prprocessorObject, 'apply')
+            shellcode = preprocessorFunction(shellcode)
+
     if args.transformers:
         transformersList = args.transformers.split(',')
         for transformersItem in transformersList:
