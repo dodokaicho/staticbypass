@@ -23,7 +23,7 @@ python3 staticbypass.py --obfuscator Base64Encode --transformers XOREncrypt,AESE
 ## Installation
 ### Install pre-reqs
 ```
-sudo apt install mono-devel mingw-w64
+sudo apt install mono-devel mingw-w64 wine
 ```
 
 ### Download project
