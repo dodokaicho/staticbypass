@@ -38,7 +38,7 @@ pip install -r requirements.txt
 
 | Preprocessor  | C  | C# | PowerShell | VBA | Description |
 |:-------------:|:--:|:--:|:----------:|:---:|:-----------:|
-| mkpivm64      | ✅ | ❌ | ❌ | ❌ | Virtualize shellcode for obfuscation |
+| mkpivm64      | ✅ | ✅ | ❌ | ❌ | Virtualize shellcode for obfuscation |
 
 | Transformer   | C  | C# | PowerShell | VBA | Description |
 |:-------------:|:--:|:--:|:----------:|:---:|:-----------:|
