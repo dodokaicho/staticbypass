@@ -74,7 +74,7 @@ pip install -r requirements.txt
 
 | Preprocessor  | C  | C# | PowerShell | VBA | Description |
 |:-------------:|:--:|:--:|:----------:|:---:|:-----------:|
-| mkpivm64      | ✅ | ✅ | ❌ | ❌ | Virtualize shellcode for obfuscation (requires template with RWX) |
+| mkpivm64      | ✅ | ✅ | ✅ | ✅ | Virtualize shellcode for obfuscation (requires template with RWX) |
 
 | Transformer   | C  | C# | PowerShell | VBA | Description |
 |:-------------:|:--:|:--:|:----------:|:---:|:-----------:|
@@ -113,7 +113,6 @@ pip install -r requirements.txt
 ```
 staticbypass
 ├── c
-    └── bin
     └── preprocessors
     └── transformers
     └── obfuscators
@@ -125,6 +124,9 @@ staticbypass
 ├── vba
     └── ...
 ├── wordlists
+    └── ...
+├── bin
+    └── ...
 ├── requirements.txt
 └── staticbypass.py
 ```
