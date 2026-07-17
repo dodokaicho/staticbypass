@@ -21,12 +21,12 @@ def main():
     parser.add_argument('-t', "--template", type=str, required=True)
     parser.add_argument('-l', "--language", type=str, required=True)
     parser.add_argument('-f', "--obfuscator", type=str, required=False)
-    parser.add_argument('-p', "--preprocessors", type=str, required=False)
+    parser.add_argument('-b', "--preprocessors", type=str, required=False)
+    parser.add_argument('-a', "--postprocessors", type=str, required=False)
     parser.add_argument('-o', "--output", type=str, required=False, default="output")
     args = parser.parse_args()
 
     shellcode = open(args.shellcode, 'rb').read()
-    shellcodeSize = len(shellcode)
 
     compilerOptions = []
     codeblocks = ''
@@ -52,6 +52,8 @@ def main():
             prprocessorObject = getattr(preprocessorModule, preprocessorItem)()
             preprocessorFunction = getattr(prprocessorObject, 'apply')
             shellcode = preprocessorFunction(shellcode)
+
+    shellcodeSize = len(shellcode)
 
     if args.transformers:
         transformersList = args.transformers.split(',')
@@ -119,19 +121,23 @@ def main():
 
     # Compile file
     if args.language == 'c':
-        result = subprocess.run(['x86_64-w64-mingw32-gcc', f'{args.output}.{args.language}', '-o', args.output] + compilerOptions)
+        outfile = f'{args.output}.exe'
+        result = subprocess.run(['x86_64-w64-mingw32-gcc', f'{args.output}.{args.language}', '-o', outfile] + compilerOptions)
         if result.returncode == 0:
-            print(f'Payload saved to {args.output}.exe')
+            print(f'Payload saved to {outfile}')
     elif args.language == 'cs':
         if args.output.lower()[-4:] != '.exe':
-            output = args.output + '.exe'
+            outfile = args.output + '.exe'
+        else:
+            outfile = args.output
         if platform.system() == 'Windows':
-            result = subprocess.run(['C:\\windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe', f'{args.output}.{args.language}', f'-out:{output}'])
+            result = subprocess.run(['C:\\windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe', f'{args.output}.{args.language}', f'-out:{outfile}'])
         elif platform.system() == 'Linux':
-            result = subprocess.run(['mcs', f'{args.output}.{args.language}', f'-out:{output}'])
+            result = subprocess.run(['mcs', f'{args.output}.{args.language}', f'-out:{outfile}'])
         if result.returncode == 0:
-            print(f'Payload saved to {args.output}.exe')
+            print(f'Payload saved to {outfile}')
     elif args.language == 'vba':
+        outfile = f'{args.output}.docm'
         """
         word_app = win32com.client.gencache.EnsureDispatch("Word.Application")
         word_app.Visible = False
@@ -145,8 +151,19 @@ def main():
         word_app.Quit()
         print(f'Word Doc saved to {args.output}.docm')
         """
-        result = create_word_doc(formattedCode, f'{args.output}.docm')
-        print(f'Macro saved to {args.output}.docm')
+        result = create_word_doc(formattedCode, outfile)
+        print(f'Macro saved to {outfile}')
+
+    if args.postprocessors:
+        postprocessorsList = args.postprocessors.split(',')
+        for postprocessorItem in postprocessorsList:
+            postprocessorSpec = importlib.util.spec_from_file_location(postprocessorItem, f'{args.language}/postprocessors/{postprocessorItem}.py')
+            postprocessorModule = importlib.util.module_from_spec(postprocessorSpec)
+            sys.modules[postprocessorSpec.name] = postprocessorModule 
+            postprocessorSpec.loader.exec_module(postprocessorModule)
+            prprocessorObject = getattr(postprocessorModule, postprocessorItem)()
+            postprocessorFunction = getattr(prprocessorObject, 'apply')
+            postprocessorFunction(outfile)
 
 if __name__ == "__main__":
     main()

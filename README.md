@@ -68,9 +68,33 @@ pip install -r requirements.txt
 | bzip2           | ✅ | ❌ | ❌ | ❌ | Process hollowing using legitimate bzip2 code as cover |
 | sqlite3         | ✅ | ❌ | ❌ | ❌ | Process hollowing using legitimate sqlite3 code as cover |
 
-## Transformer Structure
+| Postprocessor | C  | C# | PowerShell | VBA | Description |
+|:-------------:|:--:|:--:|:----------:|:---:|:-----------:|
+| strip         | ✅ | ✅ | ❌ | ❌ | Strips symbols from executable |
 
-Place a new file in the [language]/transformers/ directory. 
+
+## Project Structure
+```
+staticbypass
+├── c
+    └── bin
+    └── preprocessors
+    └── transformers
+    └── obfuscators
+    └── postprocessors
+├── cs
+    └── ...
+├── ps1
+    └── ...
+├── vba
+    └── ...
+├── wordlists
+├── requirements.txt
+└── staticbypass.py
+```
+
+## Transformer Object
+Transformers are expected to take in a byte array, perform any encryption, or encoding, and then return another byte array. Obfuscators are similar but take in a byte array and converts it into a different format, for example a string or array of strings.
 ```
 import base64
 import random
@@ -114,8 +138,7 @@ class Base64Encode:
         return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
 ```
 
-## Template Structure
-Create a new file in [language]/templates/
+## Template Object
 ```
 class shellcoderunner:
 
@@ -151,4 +174,21 @@ int main() {{
     return 0;
 }}
 """
+```
+
+## Pre/Post Processors
+Pre and Post processors have only an apply function. Pre-processors take the shellcode from the input file and apply a transformation that does not get reversed by the program, e.g. encapsulating the shellcode in a virtual machine. 
+
+Postprocessors take the output file name and perform obfuscation on the result of the compilation, e.g. stripping, packing, etc.
+```
+import subprocess
+import platform
+
+class strip:
+
+    def apply(self, outfile):
+        if platform.system() == 'Linux':
+            result = subprocess.run(['strip', '--strip-all', f'{outfile}'])
+        if result.returncode == 0:
+            return 1
 ```
