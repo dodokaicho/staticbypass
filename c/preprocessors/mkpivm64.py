@@ -19,4 +19,3 @@ class mkpivm64:
         os.remove(filename)
         os.remove(outfilename)
         return output
-            

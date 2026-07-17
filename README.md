@@ -2,7 +2,44 @@
 
 ## Usage
 ```
-python3 staticbypass.py --obfuscator Base64Encode --transformers XOREncrypt,AESEncrypt --shellcode ./shellcode.bin --template processhollow --language cs
+# Generate a process hollowing shellcode in csharp that obfuscates the shellcode using AES and XOR Encryption then Base64 encodes it
+python3 staticbypass.py --obfuscator Base64Encode --transformers XOREncrypt,AESEncrypt --shellcode ~/shellcode.bin --template processhollow --language cs
+
+# Generate a shellcode runner in c that uses mkpivm64 to execute the shellcode in a VM then RC4 Encrypt it and strip it after compiling
+python3 staticbypass.py -s ~/shellcode.bin -b mkpivm64 -e RC4Encrypt -t shellcoderunner -l c -a strip
+
+# Generate a powershell script that uses process hollowing and AES Encryption
+python3 staticbypass.py -s ~/shellcode.bin -e AESEncrypt -t processhollow -l ps1
+
+# Generate a vba script that uses process hollowing and RC4 Encryption
+python3 staticbypass.py -s ~/shellcode.bin -e RC4Encrypt -t processhollow -l vba
+```
+
+## Help
+```
+python3 staticbypass.py -h
+usage: staticbypass.py [-h] [-e TRANSFORMERS] -s SHELLCODE -t TEMPLATE -l {vba,ps1,cs,c}
+                       [-f OBFUSCATOR] [-b PREPROCESSORS] [-a POSTPROCESSORS] [-o OUTPUT]
+
+options:
+  -h, --help            show this help message and exit
+  -e, --transformers TRANSFORMERS
+                        Transformers encrypt or encode the shellcode and is decrypted or decoded at
+                        runtime.
+  -s, --shellcode SHELLCODE
+                        Specifies the raw binary shellcode file
+  -t, --template TEMPLATE
+                        Template that the shellcode and deobfuscation code will be placed into.
+  -l, --language {vba,ps1,cs,c}
+                        Language used to write and compile
+  -f, --obfuscator OBFUSCATOR
+                        Obfuscators transform the transformed shellcode bytes into other formats, such
+                        as strings.
+  -b, --preprocessors PREPROCESSORS
+                        Preprocessors modify the shellcode but are self decoding.
+  -a, --postprocessors POSTPROCESSORS
+                        Postprocessors obfuscate the resulting exe or script, e.g. packers
+  -o, --output OUTPUT   Output file name
 ```
 
 ## Features
@@ -12,13 +49,12 @@ python3 staticbypass.py --obfuscator Base64Encode --transformers XOREncrypt,AESE
 - Supports AES, XOR, and RC4 encryption, and Dictionary, UUID, IPv4, IPv6, and MAC address obfuscation
 - Designed to bypass static detection methods
 
-## WIP
-- Adding more obfuscator support for the different programming languages
-- Adding pre and post compile obfuscations e.g. vba and powershell obfuscation
-- Adding more language support e.g. rust and go
-- Adding more templates e.g. early bird apc injection, heap allocation
-- Dynamically building help text
-- Refactor code a little bit
+## Roadmap
+- Add obfuscator support for the different programming languages
+- Add pre and post compile obfuscations e.g. vba and powershell obfuscation
+- Add language support e.g. rust and go
+- Add more templates e.g. early bird apc injection, heap allocation
+- Refactor code
 
 ## Installation
 ### Install pre-reqs

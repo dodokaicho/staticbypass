@@ -16,14 +16,14 @@ except:
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-e', "--transformers", type=str, required=False)
-    parser.add_argument('-s', "--shellcode", type=str, required=True)
-    parser.add_argument('-t', "--template", type=str, required=True)
-    parser.add_argument('-l', "--language", type=str, required=True)
-    parser.add_argument('-f', "--obfuscator", type=str, required=False)
-    parser.add_argument('-b', "--preprocessors", type=str, required=False)
-    parser.add_argument('-a', "--postprocessors", type=str, required=False)
-    parser.add_argument('-o', "--output", type=str, required=False, default="output")
+    parser.add_argument('-e', "--transformers", type=str, required=False, help='Transformers encrypt or encode the shellcode and is decrypted or decoded at runtime.')
+    parser.add_argument('-s', "--shellcode", type=str, required=True, help='Specifies the raw binary shellcode file')
+    parser.add_argument('-t', "--template", type=str, required=True, help='Template that the shellcode and deobfuscation code will be placed into.')
+    parser.add_argument('-l', "--language", type=str, choices={"c","cs","ps1","vba"}, required=True, help='Language used to write and compile')
+    parser.add_argument('-f', "--obfuscator", type=str, required=False, help='Obfuscators transform the transformed shellcode bytes into other formats, such as strings.')
+    parser.add_argument('-b', "--preprocessors", type=str, required=False, help='Preprocessors modify the shellcode but are self decoding.')
+    parser.add_argument('-a', "--postprocessors", type=str, required=False, help='Postprocessors obfuscate the resulting exe or script, e.g. packers')
+    parser.add_argument('-o', "--output", type=str, required=False, default="output", help='Output file name')
     args = parser.parse_args()
 
     shellcode = open(args.shellcode, 'rb').read()
