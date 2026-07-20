@@ -1,7 +1,7 @@
 import string
 import random
 
-class DeterministicShuffle:
+class Shuffle:
 
     def __init__(self):
         self.name = ''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(16))

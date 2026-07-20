@@ -83,7 +83,7 @@ pip install -r requirements.txt
 | RC4Encrypt    | ✅ | ✅ | ✅ | ✅ | RC4 Encryption |
 | RSAEncrypt    | ❌ | ✅ | ❌ | ❌ | RSA Encryption |
 | Rotate        | ✅ | ❌ | ❌ | ❌ | Rotate each byte by 4 bits |
-| DeterministicShuffle | ✅ | ❌ | ❌ | ❌ | Shuffle bytes reversibly |
+| Shuffle       | ✅ | ❌ | ❌ | ❌ | Shuffle bytes reversibly |
 
 | Obfuscator    | C   | C# | PowerShell | VBA | Description |
 |:-------------:|:---:|:--:|:----------:|:---:|:-----------:|
