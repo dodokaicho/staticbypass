@@ -18,10 +18,14 @@ unsigned char * {name}(const unsigned char *encoded)
     int stackPointer = 0;
     int outIndex = 0;
     int instructionPointer = 0;
+    int bracketCount = 0;
     while (instructionPointer < {len} - 1){{
         switch(encoded[instructionPointer]){{
             case '>': 
                 stackPointer++; 
+                break;
+            case '<': 
+                stackPointer--; 
                 break;
             case '+': 
                 stack[stackPointer]++; 
@@ -35,15 +39,31 @@ unsigned char * {name}(const unsigned char *encoded)
                 break;
             case '[':
                 if (stack[stackPointer] == 0){{
-                    while (encoded[instructionPointer] != ']'){{
+                    while (1){{
                         instructionPointer++;
+                        if (encoded[instructionPointer] == ']' && bracketCount == 0){{
+                            break;
+                        }}
+                        if (encoded[instructionPointer] == '['){{
+                            bracketCount++;
+                        }} else if (encoded[instructionPointer] == ']'){{
+                            bracketCount--;
+                        }}
                     }}
                 }}
                 break;
             case ']':
                 if (stack[stackPointer] != 0){{
-                    while (encoded[instructionPointer] != '['){{
+                    while (1){{
                         instructionPointer--;
+                        if (encoded[instructionPointer] == '[' && bracketCount == 0){{
+                            break;
+                        }}
+                        if (encoded[instructionPointer] == ']'){{
+                            bracketCount++;
+                        }} else if (encoded[instructionPointer] == '['){{
+                            bracketCount--;
+                        }}
                     }}
                 }}
                 break;
