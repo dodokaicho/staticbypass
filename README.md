@@ -50,8 +50,8 @@ options:
 - Designed to bypass static detection methods
 
 ## Roadmap
+- Add options to transformer and obfuscator modules
 - Add obfuscator support for the different programming languages
-- Add pre and post compile obfuscations e.g. vba and powershell obfuscation
 - Add language support e.g. rust and go
 - Add more templates e.g. early bird apc injection, heap allocation
 - Refactor code
