@@ -108,7 +108,7 @@ pip install -r requirements.txt
 |:-------------:|:--:|:--:|:----------:|:---:|:-----------:|
 | strip         | ✅ | ✅ | ❌ | ❌ | Strips symbols from executable |
 | obfell        | ❌ | ❌ | ✅ | ❌ | Powershell obfuscator by @Jael-G |
-| strip         | ❌ | ❌ | ✅ | ❌ | Powershell obfuscator by @bobby-tablez |
+| junkpile      | ❌ | ❌ | ✅ | ❌ | Powershell obfuscator by @bobby-tablez |
 
 
 ## Project Structure
