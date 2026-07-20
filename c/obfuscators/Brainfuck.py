@@ -51,10 +51,6 @@ unsigned char * {name}(const unsigned char *encoded)
         instructionPointer++;
     }}
 
-    for (int i =0; i<{size}; i++){{
-        printf("%llx\\n", out[i]);
-    }}
-
     return out;
 }}
 """.format(name = self.name, size = self.size, len=self.len)
