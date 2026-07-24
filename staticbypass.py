@@ -93,7 +93,10 @@ def main():
     templateSpec.loader.exec_module(templateModule)
     templateObject = getattr(templateModule, args.template)()
     templateCode = getattr(templateObject, 'template')()
+    compilerOptions += getattr(templateObject, 'compilerOptions')()
     imports = getattr(templateObject, 'imports')() + imports
+
+    print(compilerOptions)
 
     # Rename obfuscated shellcode
     if args.language == 'ps1':
@@ -122,7 +125,9 @@ def main():
     # Compile file
     if args.language == 'c':
         outfile = f'{args.output}.exe'
-        result = subprocess.run(['x86_64-w64-mingw32-gcc', f'{args.output}.{args.language}', '-o', outfile] + compilerOptions)
+        temp = ['x86_64-w64-mingw32-gcc', f'{args.output}.{args.language}', '-o', outfile, '-Wall'] + compilerOptions
+        print(temp)
+        result = subprocess.run(['x86_64-w64-mingw32-gcc' , f'{args.output}.{args.language}', '-o', outfile, ] + compilerOptions)
         if result.returncode == 0:
             print(f'Payload saved to {outfile}')
     elif args.language == 'cs':
