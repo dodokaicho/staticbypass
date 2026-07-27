@@ -14,15 +14,21 @@ class hellsgate:
 .text
 	.globl HellsGate
 HellsGate:
+	nop
 	movl $0, wSystemCall(%rip)
+	nop
 	movl %ecx, wSystemCall(%rip)
+	nop
 	ret
 
 	.globl HellDescent
 HellDescent:
 	movq %rcx, %r10
+	nop
 	movl wSystemCall(%rip), %eax
+	nop
 	syscall
+	nop
 	ret
 """
             f.write(inline_assembly)
