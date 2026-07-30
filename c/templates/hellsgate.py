@@ -6,6 +6,7 @@ class hellsgate:
 
     def __init__(self):
         fd, file_path = tempfile.mkstemp()
+        self.outfd, self.outfile_path = tempfile.mkstemp()
         with os.fdopen(fd, 'w') as f:
             inline_assembly = """
 .data
@@ -18,7 +19,6 @@ HellsGate:
 	movl $0, wSystemCall(%rip)
 	nop
 	movl %ecx, wSystemCall(%rip)
-	nop
 	ret
 
 	.globl HellDescent
@@ -32,14 +32,14 @@ HellDescent:
 	ret
 """
             f.write(inline_assembly)
-        result = subprocess.run(['x86_64-w64-mingw32-as', file_path, '-o', 'hellsgate.o'])
+        result = subprocess.run(['x86_64-w64-mingw32-as', file_path, '-o', self.outfile_path])
         os.unlink(file_path)
 
     def imports(self):
         return ["#include <windows.h>", "#include <stdio.h>", "#include <stdlib.h>"]
 
     def compilerOptions(self):
-        return ['hellsgate.o', '-municode', '-w', '-s', '-Os', '-IInclude']
+        return [self.outfile_path, '-municode', '-w', '-s', '-Os', '-IInclude']
 
     def template(self):
         return """
