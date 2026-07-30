@@ -96,8 +96,6 @@ def main():
     compilerOptions += getattr(templateObject, 'compilerOptions')()
     imports = getattr(templateObject, 'imports')() + imports
 
-    print(compilerOptions)
-
     # Rename obfuscated shellcode
     if args.language == 'ps1':
         transformers = transformers.format(shellcode='$obfuscated')
@@ -126,7 +124,6 @@ def main():
     if args.language == 'c':
         outfile = f'{args.output}.exe'
         temp = ['x86_64-w64-mingw32-gcc', f'{args.output}.{args.language}', '-o', outfile, '-Wall'] + compilerOptions
-        print(temp)
         result = subprocess.run(['x86_64-w64-mingw32-gcc' , f'{args.output}.{args.language}', '-o', outfile, ] + compilerOptions)
         if result.returncode == 0:
             print(f'Payload saved to {outfile}')
