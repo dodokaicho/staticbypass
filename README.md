@@ -1,21 +1,13 @@
 # StaticBypass - Template-based, modular, multi-language, shellcode obfuscator and compiler
 
+## Features
+- Takes in a raw shellcode file, applies encryptors and obfuscators, formats it, places it into a template, and compiles it
+- Supports C, C#, PowerShell, and VBA
+- Automates placing VBA code into a word document
+- Supports AES, XOR, and RC4 encryption, and Dictionary, UUID, IPv4, IPv6, and MAC address obfuscation
+- Designed to bypass static detection methods
+
 ## Usage
-```
-# Generate a process hollowing shellcode in csharp that obfuscates the shellcode using AES and XOR Encryption then Base64 encodes it
-python3 staticbypass.py --obfuscator Base64Encode --transformers XOREncrypt,AESEncrypt --shellcode ~/shellcode.bin --template processhollow --language cs
-
-# Generate a shellcode runner in c that uses mkpivm64 to execute the shellcode in a VM then RC4 Encrypt it and strip it after compiling
-python3 staticbypass.py -s ~/shellcode.bin -b mkpivm64 -e RC4Encrypt -t shellcoderunner -l c -a strip
-
-# Generate a powershell script that uses process hollowing and AES Encryption
-python3 staticbypass.py -s ~/shellcode.bin -e AESEncrypt -t processhollow -l ps1
-
-# Generate a vba script that uses process hollowing and RC4 Encryption
-python3 staticbypass.py -s ~/shellcode.bin -e RC4Encrypt -t processhollow -l vba
-```
-
-## Help
 ```
 python3 staticbypass.py -h
 usage: staticbypass.py [-h] [-e TRANSFORMERS] -s SHELLCODE -t TEMPLATE -l {vba,ps1,cs,c}
@@ -42,17 +34,28 @@ options:
   -o, --output OUTPUT   Output file name
 ```
 
-## Features
-- Takes in a raw shellcode file, applies encryptors and obfuscators, formats it, places it into a template, and compiles it
-- Supports C, C#, PowerShell, and VBA
-- Automates placing VBA code into a word document
-- Supports AES, XOR, and RC4 encryption, and Dictionary, UUID, IPv4, IPv6, and MAC address obfuscation
-- Designed to bypass static detection methods
+## Examples
+```
+# Generate a process hollowing shellcode in csharp that obfuscates the shellcode using AES and XOR Encryption then Base64 encode it
+
+python3 staticbypass.py --obfuscator Base64Encode --transformers XOREncrypt,AESEncrypt --shellcode ~/shellcode.bin --template processhollow --language cs
+
+# Generate a shellcode runner in c that uses mkpivm64 to execute the shellcode in a VM then RC4 Encrypt it and strip it after compiling
+
+python3 staticbypass.py -s ~/shellcode.bin -b mkpivm64 -e RC4Encrypt -t shellcoderunner -l c -a strip
+
+# Generate a powershell script that uses process hollowing and AES Encryption
+python3 staticbypass.py -s ~/shellcode.bin -e AESEncrypt -t processhollow -l ps1
+
+# Generate a vba script that uses process hollowing and RC4 Encryption
+python3 staticbypass.py -s ~/shellcode.bin -e RC4Encrypt -t processhollow -l vba
+```
+
 
 ## Roadmap
 - Add options to transformer and obfuscator modules
 - Add obfuscator support for the different programming languages
-- Add language support e.g. rust and go
+- Add language support e.g. rust, go
 - Add more templates e.g. early bird apc injection, heap allocation
 - Refactor code
 
@@ -95,7 +98,7 @@ pip install -r requirements.txt
 | MACObfuscate  | ✅ | ✅ | ✅ | ✅ | Convert bytes into MAC addresses |
 | UUIDEncode    | ✅ | ✅ | ✅ | ❌ | Convert bytes into UUIDv4 strings |
 | EmojiEncode   | ✅ | ✅ | ✅ | ❌ | Convert bytes into emoji |
-| Brainfuck     | ✅ | ❌ | ❌ | ❌ | Convert bytes into a brainfuck string (Very slow) |
+| Brainfuck     | ✅ | ❌ | ❌ | ❌ | Convert bytes into a brainfuck string (slow) |
 | Whitespace    | ✅ | ❌ | ❌ | ❌ | Convert bytes into tabs and spaces |
 
 | Template        | C  | C# | PowerShell | VBA | Description |
@@ -185,6 +188,7 @@ class Base64Encode:
 ```
 
 ## Template Object
+Template objects include functions that return imports, any compiler options required, and the template code that includes placeholders for the shellcode, transformers, codeblocks, imports, and shellcode size.
 ```
 class shellcoderunner:
 
