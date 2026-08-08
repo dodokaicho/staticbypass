@@ -62,7 +62,7 @@ python3 staticbypass.py -s ~/shellcode.bin -e RC4Encrypt -t processhollow -l vba
 ## Installation
 ### Install pre-reqs
 ```
-sudo apt install mono-devel mingw-w64 wine
+sudo apt install mono-devel mingw-w64 wine osslsigncode
 ```
 
 ### Download project
@@ -77,7 +77,7 @@ pip install -r requirements.txt
 
 | Preprocessor  | C  | C# | PowerShell | VBA | Rust | Description |
 |:-------------:|:--:|:--:|:----------:|:---:|:----:|:-----------:|
-| mkpivm64      | ✅ | ✅ | ✅ | ✅ | ❌ | Virtualize shellcode for obfuscation (requires template with RWX) by @D7EAD |
+| mkpivm64      | ✅ | ✅ | ✅ | ✅ | ✅ | Virtualize shellcode for obfuscation (requires template with RWX) by @D7EAD |
 
 | Transformer   | C  | C# | PowerShell | VBA | Rust | Description |
 |:-------------:|:--:|:--:|:----------:|:---:|:----:|:-----------:|
@@ -114,8 +114,8 @@ pip install -r requirements.txt
 
 | Postprocessor | C  | C# | PowerShell | VBA | Rust | Description |
 |:-------------:|:--:|:--:|:----------:|:---:|:----:|:-----------:|
-| strip         | ✅ | ✅ | ❌ | ❌ | ❌ | Strips symbols from executable |
-| sign          | ✅ | ❌ | ❌ | ❌ | ❌ | Sign executable with self-signed certificate |
+| strip         | ✅ | ✅ | ❌ | ❌ | ✅ | Strips symbols from executable |
+| sign          | ✅ | ❌ | ❌ | ❌ | ✅ | Sign executable with self-signed certificate |
 | obfell        | ❌ | ❌ | ✅ | ❌ | ❌ | Powershell obfuscator by @Jael-G |
 | junkpile      | ❌ | ❌ | ✅ | ❌ | ❌ | Powershell obfuscator by @bobby-tablez |
 
