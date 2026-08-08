@@ -161,11 +161,9 @@ edition = "2021"
 {'\n'.join(compilerOptions)}
 
 [profile.release]
-strip = true
-lto = true
 """)
         result = subprocess.run(['cargo', 'build', '--release', '--target', 'x86_64-pc-windows-gnu'], cwd='output')
-        shutil.copy('output/target/x86_64-pc-windows-gnu/release/output.exe', 'output.exe')
+        shutil.copy('output/target/x86_64-pc-windows-gnu/release/output.exe', outfile)
         if result.returncode == 0:
             print(f'Payload saved to {outfile}')
 
