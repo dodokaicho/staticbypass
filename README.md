@@ -81,9 +81,9 @@ pip install -r requirements.txt
 
 | Transformer   | C  | C# | PowerShell | VBA | Rust | Description |
 |:-------------:|:--:|:--:|:----------:|:---:|:----:|:-----------:|
-| AESEncrypt    | ✅ | ✅ | ✅ | ❌ | ❌ | AES Encryption |
+| AESEncrypt    | ✅ | ✅ | ✅ | ❌ | ✅ | AES Encryption |
 | TinyAES       | ✅ | ❌ | ❌ | ❌ | ❌ | AES Encryption without libraries |
-| XOREncrypt    | ✅ | ✅ | ✅ | ✅ | ❌ | XOR Encryption |
+| XOREncrypt    | ✅ | ✅ | ✅ | ✅ | ✅ | XOR Encryption |
 | RC4Encrypt    | ✅ | ✅ | ✅ | ✅ | ❌ | RC4 Encryption |
 | RSAEncrypt    | ❌ | ✅ | ❌ | ❌ | ❌ | RSA Encryption |
 | Rotate        | ✅ | ❌ | ❌ | ❌ | ❌ | Rotate each byte by 4 bits |
@@ -91,7 +91,7 @@ pip install -r requirements.txt
 
 | Obfuscator    | C   | C# | PowerShell | VBA | Rust | Description |
 |:-------------:|:---:|:--:|:----------:|:---:|:----:|:-----------:|
-| Base64Encode  | ✅ | ✅ | ✅ | ✅ | ❌ | Base64 Encode |
+| Base64Encode  | ✅ | ✅ | ✅ | ✅ | ✅ | Base64 Encode |
 | DictObfuscate | ✅ | ✅ | ✅ | ✅ | ❌ | Convert bytes into randomly picked dictionary words. Uses wordlists/english.txt |
 | IPv4Obfuscate | ✅ | ✅ | ✅ | ✅ | ❌ | Convert bytes into IPv4 addresses |
 | IPv6Obfuscate | ✅ | ✅ | ✅ | ✅ | ❌ | Convert bytes into IPv6 addresses |

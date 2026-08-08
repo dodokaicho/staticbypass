@@ -151,14 +151,14 @@ def main():
         shutil.rmtree('output', ignore_errors=True)
         os.makedirs(f'output/src/', exist_ok=True)
         open(f'output/src/main.rs', 'w').write(formattedCode)
-        open(f'output/Cargo.toml', 'w').write("""
+        open(f'output/Cargo.toml', 'w').write(f"""
 [package]
 name = "output"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-winapi = {version = "0.3.9", features = ["winnt", "synchapi", "memoryapi", "processthreadsapi"]}
+{'\n'.join(compilerOptions)}
 
 [profile.release]
 strip = true

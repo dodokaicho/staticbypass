@@ -75,4 +75,7 @@ def list_to_vba(itemList, name):
     return returnString
 
 def bytes_to_rs(bytestring, name):
-    return f'let {name}: [u8; {len(bytestring)}] = [{','.join([f'{hex(val)}' for val in bytestring])}];'
+    return f'let {name}= vec![{','.join([f'{hex(val)}' for val in bytestring])}];'
+
+def str_to_rs(string, name):
+    return f'let {name} = String::from("{string}");'

