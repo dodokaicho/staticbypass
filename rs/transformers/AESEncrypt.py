@@ -13,30 +13,28 @@ class AESEncrypt:
         self.iv = os.urandom(16)
 
     def imports(self):
-        return ["extern crate openssl;", "use openssl::symm::{Cipher, Crypter, Mode};"]
+        return ["extern crate aes;", 
+                "use aes::Aes128;", 
+                "extern crate cbc;", 
+                "use aes::cipher::{block_padding::Pkcs7, BlockModeEncrypt, BlockModeDecrypt, KeyIvInit};",
+                "type Aes256CbcDec = cbc::Decryptor<aes::Aes256>;"]
 
     def compilerOptions(self):
-        return ['openssl = {version = "0.10.81", features = ["vendored"]}']
+        return ['cbc = "0.2.1"', 'aes = "0.9.2"']
 
     def codeblock(self):
-        return """
-fn {name}(encrypted_data: &[u8]) -> Vec<u8>{{
-    {key}
-    {iv}
-    let cipher = Cipher::aes_256_cbc();
-    let mut decrypter = Crypter::new(cipher, Mode::Decrypt, &key, Some(&iv)).unwrap();
-
-    let block_size = cipher.block_size();
-    let mut decrypted_data = vec![0; encrypted_data.len() + block_size];
-    let count = decrypter
-        .update(encrypted_data, &mut decrypted_data)
+        return f"""
+fn {self.name}(encrypted_data: &[u8]) -> Vec<u8>{{
+    {bytes_to_rs(self.key, 'key')}
+    {bytes_to_rs(self.iv, 'iv')}
+    let mut plaintext = vec![0u8; encrypted_data.len()];
+    let pt = Aes256CbcDec::new(&key.into(), &iv.into())
+        .decrypt_padded_b2b::<Pkcs7>(&encrypted_data, &mut plaintext)
         .unwrap();
-    let rest = decrypter.finalize(&mut decrypted_data[count..]).unwrap();
-    decrypted_data.truncate(count + rest);
 
-    decrypted_data
+    pt.to_vec()
 }}
-""".format(name=self.name, key=bytes_to_rs(self.key, 'key'), iv=bytes_to_rs(self.iv, 'iv'), ciphertextSize = self.ciphertextSize)
+"""
 
     def transformer(self, shellcodestring):
         return shellcodestring.format(shellcode=f'{self.name}(&{{shellcode}})')
