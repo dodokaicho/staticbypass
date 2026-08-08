@@ -2,7 +2,7 @@
 
 ## Features
 - Takes in a raw shellcode file, applies encryptors and obfuscators, formats it, places it into a template, and compiles it
-- Supports C, C#, PowerShell, and VBA
+- Supports C, C#, PowerShell, VBA, and Rust
 - Automates placing VBA code into a word document
 - Supports AES, XOR, and RC4 encryption, and Dictionary, UUID, IPv4, IPv6, and MAC address obfuscation
 - Designed to bypass static detection methods
@@ -22,7 +22,7 @@ options:
                         Specifies the raw binary shellcode file
   -t, --template TEMPLATE
                         Template that the shellcode and deobfuscation code will be placed into.
-  -l, --language {vba,ps1,cs,c}
+  -l, --language {vba,ps1,cs,c,rs}
                         Language used to write and compile
   -f, --obfuscator OBFUSCATOR
                         Obfuscators transform the transformed shellcode bytes into other formats, such
@@ -75,49 +75,49 @@ pip install -r requirements.txt
 
 ## Currently Implemented
 
-| Preprocessor  | C  | C# | PowerShell | VBA | Description |
-|:-------------:|:--:|:--:|:----------:|:---:|:-----------:|
-| mkpivm64      | ✅ | ✅ | ✅ | ✅ | Virtualize shellcode for obfuscation (requires template with RWX) by @D7EAD |
+| Preprocessor  | C  | C# | PowerShell | VBA | Rust | Description |
+|:-------------:|:--:|:--:|:----------:|:---:|:----:|:-----------:|
+| mkpivm64      | ✅ | ✅ | ✅ | ✅ | ❌ | Virtualize shellcode for obfuscation (requires template with RWX) by @D7EAD |
 
-| Transformer   | C  | C# | PowerShell | VBA | Description |
-|:-------------:|:--:|:--:|:----------:|:---:|:-----------:|
-| AESEncrypt    | ✅ | ✅ | ✅ | ❌ | AES Encryption |
-| TinyAES       | ✅ | ❌ | ❌ | ❌ | AES Encryption without libraries |
-| XOREncrypt    | ✅ | ✅ | ✅ | ✅ | XOR Encryption |
-| RC4Encrypt    | ✅ | ✅ | ✅ | ✅ | RC4 Encryption |
-| RSAEncrypt    | ❌ | ✅ | ❌ | ❌ | RSA Encryption |
-| Rotate        | ✅ | ❌ | ❌ | ❌ | Rotate each byte by 4 bits |
-| Shuffle       | ✅ | ❌ | ❌ | ❌ | Shuffle bytes reversibly |
+| Transformer   | C  | C# | PowerShell | VBA | Rust | Description |
+|:-------------:|:--:|:--:|:----------:|:---:|:----:|:-----------:|
+| AESEncrypt    | ✅ | ✅ | ✅ | ❌ | ❌ | AES Encryption |
+| TinyAES       | ✅ | ❌ | ❌ | ❌ | ❌ | AES Encryption without libraries |
+| XOREncrypt    | ✅ | ✅ | ✅ | ✅ | ❌ | XOR Encryption |
+| RC4Encrypt    | ✅ | ✅ | ✅ | ✅ | ❌ | RC4 Encryption |
+| RSAEncrypt    | ❌ | ✅ | ❌ | ❌ | ❌ | RSA Encryption |
+| Rotate        | ✅ | ❌ | ❌ | ❌ | ❌ | Rotate each byte by 4 bits |
+| Shuffle       | ✅ | ❌ | ❌ | ❌ | ❌ | Shuffle bytes reversibly |
 
-| Obfuscator    | C   | C# | PowerShell | VBA | Description |
-|:-------------:|:---:|:--:|:----------:|:---:|:-----------:|
-| Base64Encode  | ✅ | ✅ | ✅ | ✅ | Base64 Encode |
-| DictObfuscate | ✅ | ✅ | ✅ | ✅ | Convert bytes into randomly picked dictionary words. Uses wordlists/english.txt |
-| IPv4Obfuscate | ✅ | ✅ | ✅ | ✅ | Convert bytes into IPv4 addresses |
-| IPv6Obfuscate | ✅ | ✅ | ✅ | ✅ | Convert bytes into IPv6 addresses |
-| MACObfuscate  | ✅ | ✅ | ✅ | ✅ | Convert bytes into MAC addresses |
-| UUIDEncode    | ✅ | ✅ | ✅ | ❌ | Convert bytes into UUIDv4 strings |
-| EmojiEncode   | ✅ | ✅ | ✅ | ❌ | Convert bytes into emoji |
-| Brainfuck     | ✅ | ❌ | ❌ | ❌ | Convert bytes into a brainfuck string (slow) |
-| Whitespace    | ✅ | ❌ | ❌ | ❌ | Convert bytes into tabs and spaces |
+| Obfuscator    | C   | C# | PowerShell | VBA | Rust | Description |
+|:-------------:|:---:|:--:|:----------:|:---:|:----:|:-----------:|
+| Base64Encode  | ✅ | ✅ | ✅ | ✅ | ❌ | Base64 Encode |
+| DictObfuscate | ✅ | ✅ | ✅ | ✅ | ❌ | Convert bytes into randomly picked dictionary words. Uses wordlists/english.txt |
+| IPv4Obfuscate | ✅ | ✅ | ✅ | ✅ | ❌ | Convert bytes into IPv4 addresses |
+| IPv6Obfuscate | ✅ | ✅ | ✅ | ✅ | ❌ | Convert bytes into IPv6 addresses |
+| MACObfuscate  | ✅ | ✅ | ✅ | ✅ | ❌ | Convert bytes into MAC addresses |
+| UUIDEncode    | ✅ | ✅ | ✅ | ❌ | ❌ | Convert bytes into UUIDv4 strings |
+| EmojiEncode   | ✅ | ✅ | ✅ | ❌ | ❌ | Convert bytes into emoji |
+| Brainfuck     | ✅ | ❌ | ❌ | ❌ | ❌ | Convert bytes into a brainfuck string (slow) |
+| Whitespace    | ✅ | ❌ | ❌ | ❌ | ❌ | Convert bytes into tabs and spaces |
 
-| Template        | C  | C# | PowerShell | VBA | Description |
-|:---------------:|:--:|:--:|:----------:|:---:|:-----------:|
-| shellcoderunner | ✅ | ✅ | ✅ | ✅ | Simple shellcode runner using CreateThread |
-| processhollow   | ✅ | ✅ | ✅ | ✅ | Process hollowing template targeting svchost.exe |
-| processinject   | ✅ | ❌ | ❌ | ❌ | Search for explorer.exe and create a remote thread |
-| delayedhollow   | ✅ | ❌ | ❌ | ❌ | Process hollowing with delay |
-| hellsgate       | ✅ | ❌ | ❌ | ❌ | Dynamic API resolution using HellsGate technique |
-| threadhijack    | ✅ | ❌ | ❌ | ❌ | Hijack running thread in existing process |
-| bzip2           | ✅ | ❌ | ❌ | ❌ | Process hollowing using legitimate bzip2 code as cover |
-| sqlite3         | ✅ | ❌ | ❌ | ❌ | Process hollowing using legitimate sqlite3 code as cover |
+| Template        | C  | C# | PowerShell | VBA | Rust | Description |
+|:---------------:|:--:|:--:|:----------:|:---:|:----:|:-----------:|
+| shellcoderunner | ✅ | ✅ | ✅ | ✅ | ✅ | Simple shellcode runner using CreateThread |
+| processhollow   | ✅ | ✅ | ✅ | ✅ | ❌ | Process hollowing template targeting svchost.exe |
+| processinject   | ✅ | ❌ | ❌ | ❌ | ❌ | Search for explorer.exe and create a remote thread |
+| delayedhollow   | ✅ | ❌ | ❌ | ❌ | ❌ | Process hollowing with delay |
+| hellsgate       | ✅ | ❌ | ❌ | ❌ | ❌ | Dynamic API resolution using HellsGate technique |
+| threadhijack    | ✅ | ❌ | ❌ | ❌ | ❌ | Hijack running thread in existing process |
+| bzip2           | ✅ | ❌ | ❌ | ❌ | ❌ | Process hollowing using legitimate bzip2 code as cover |
+| sqlite3         | ✅ | ❌ | ❌ | ❌ | ❌ | Process hollowing using legitimate sqlite3 code as cover |
 
-| Postprocessor | C  | C# | PowerShell | VBA | Description |
-|:-------------:|:--:|:--:|:----------:|:---:|:-----------:|
-| strip         | ✅ | ✅ | ❌ | ❌ | Strips symbols from executable |
-| sign          | ✅ | ❌ | ❌ | ❌ | Sign executable with self-signed certificate |
-| obfell        | ❌ | ❌ | ✅ | ❌ | Powershell obfuscator by @Jael-G |
-| junkpile      | ❌ | ❌ | ✅ | ❌ | Powershell obfuscator by @bobby-tablez |
+| Postprocessor | C  | C# | PowerShell | VBA | Rust | Description |
+|:-------------:|:--:|:--:|:----------:|:---:|:----:|:-----------:|
+| strip         | ✅ | ✅ | ❌ | ❌ | ❌ | Strips symbols from executable |
+| sign          | ✅ | ❌ | ❌ | ❌ | ❌ | Sign executable with self-signed certificate |
+| obfell        | ❌ | ❌ | ✅ | ❌ | ❌ | Powershell obfuscator by @Jael-G |
+| junkpile      | ❌ | ❌ | ✅ | ❌ | ❌ | Powershell obfuscator by @bobby-tablez |
 
 
 ## Project Structure
@@ -133,6 +133,8 @@ staticbypass
 ├── ps1
     └── ...
 ├── vba
+    └── ...
+├── rs
     └── ...
 ├── wordlists
     └── ...

@@ -73,3 +73,6 @@ def list_to_vba(itemList, name):
 
 
     return returnString
+
+def bytes_to_rs(bytestring, name):
+    return f'let {name}: [u8; {len(bytestring)}] = [{','.join([f'{hex(val)}' for val in bytestring])}];'
