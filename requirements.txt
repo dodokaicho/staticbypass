@@ -1,5 +1,6 @@
 lxml==6.1.1
 olefile==0.47
+pillow==12.3.0
 pycryptodome==3.23.0
 python-docx==1.2.0
 typing_extensions==4.16.0
