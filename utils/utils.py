@@ -81,5 +81,10 @@ def bytes_to_rs(bytestring, name):
 def str_to_rs(string, name):
     return f'let {name} = String::from("{string}");'
 
+
+def list_to_rs(itemList, name):
+    return f'let {name}: [&str; {len(itemList)}] = [{','.join(f'"{s}"' for s in itemList)}];'
+
+
 def generateFunctionName():
     return random.choice(open('wordlists/verbs.txt', 'r').readlines()).strip() + random.choice(open('wordlists/nouns.txt', 'r').readlines()).strip()

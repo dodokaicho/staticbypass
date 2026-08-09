@@ -93,10 +93,10 @@ pip install -r requirements.txt
 |:-------------:|:---:|:--:|:----------:|:---:|:----:|:-----------:|
 | Base64Encode  | ✅ | ✅ | ✅ | ✅ | ✅ | Base64 Encode |
 | DictObfuscate | ✅ | ✅ | ✅ | ✅ | ❌ | Convert bytes into randomly picked dictionary words. Uses wordlists/english.txt |
-| IPv4Obfuscate | ✅ | ✅ | ✅ | ✅ | ❌ | Convert bytes into IPv4 addresses |
-| IPv6Obfuscate | ✅ | ✅ | ✅ | ✅ | ❌ | Convert bytes into IPv6 addresses |
-| MACObfuscate  | ✅ | ✅ | ✅ | ✅ | ❌ | Convert bytes into MAC addresses |
-| UUIDEncode    | ✅ | ✅ | ✅ | ❌ | ❌ | Convert bytes into UUIDv4 strings |
+| IPv4Obfuscate | ✅ | ✅ | ✅ | ✅ | ✅ | Convert bytes into IPv4 addresses |
+| IPv6Obfuscate | ✅ | ✅ | ✅ | ✅ | ✅ | Convert bytes into IPv6 addresses |
+| MACObfuscate  | ✅ | ✅ | ✅ | ✅ | ✅ | Convert bytes into MAC addresses |
+| UUIDEncode    | ✅ | ✅ | ✅ | ❌ | ✅ | Convert bytes into UUIDv4 strings |
 | EmojiEncode   | ✅ | ✅ | ✅ | ❌ | ❌ | Convert bytes into emoji |
 | Brainfuck     | ✅ | ❌ | ❌ | ❌ | ❌ | Convert bytes into a brainfuck string (slow) |
 | Whitespace    | ✅ | ❌ | ❌ | ❌ | ❌ | Convert bytes into tabs and spaces |
