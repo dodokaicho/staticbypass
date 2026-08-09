@@ -1,5 +1,5 @@
 import os
-from utils.utils import bytes_to_rs
+from utils.utils import bytes_to_rs, generateFunctionName
 from Crypto.Cipher import ARC4
 import string
 import random
@@ -7,7 +7,7 @@ import random
 class RC4Encrypt:
 
     def __init__(self):
-        self.name = ''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(16))
+        self.name = ''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(16))
         self.key = os.urandom(16)
 
     def imports(self):

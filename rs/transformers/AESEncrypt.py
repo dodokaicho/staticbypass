@@ -8,15 +8,14 @@ import random
 class AESEncrypt:
 
     def __init__(self):
-        self.name = ''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(16))
+        self.name = ''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(16))
         self.key = os.urandom(32)
         self.iv = os.urandom(16)
 
     def imports(self):
         return ["extern crate aes;", 
-                "use aes::Aes128;", 
                 "extern crate cbc;", 
-                "use aes::cipher::{block_padding::Pkcs7, BlockModeEncrypt, BlockModeDecrypt, KeyIvInit};",
+                "use aes::cipher::{block_padding::Pkcs7, BlockModeDecrypt, KeyIvInit};",
                 "type Aes256CbcDec = cbc::Decryptor<aes::Aes256>;"]
 
     def compilerOptions(self):

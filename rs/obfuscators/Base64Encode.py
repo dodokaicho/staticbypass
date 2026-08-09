@@ -6,7 +6,7 @@ import string
 class Base64Encode:
 
     def __init__(self):
-        self.name = ''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(16))
+        self.name = ''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(16))
 
     def imports(self):
         return ["use base64::prelude::*;"]

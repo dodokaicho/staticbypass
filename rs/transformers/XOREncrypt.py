@@ -6,7 +6,7 @@ import os
 class XOREncrypt:
 
     def __init__(self):
-        self.name = ''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(16))
+        self.name = ''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(16))
         self.key = os.urandom(16)
 
     def imports(self):

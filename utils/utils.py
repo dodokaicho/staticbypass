@@ -1,4 +1,4 @@
-
+import random
 
 def bytes_to_cs(bytestring, name):
     return f'byte[] {name} = new byte [{len(bytestring)}] {{' + ','.join([f'{hex(val)}' for val in bytestring]) + '};'
@@ -80,3 +80,6 @@ def bytes_to_rs(bytestring, name):
 
 def str_to_rs(string, name):
     return f'let {name} = String::from("{string}");'
+
+def generateFunctionName():
+    return random.choice(open('wordlists/verbs.txt', 'r').readlines()).strip() + random.choice(open('wordlists/nouns.txt', 'r').readlines()).strip()

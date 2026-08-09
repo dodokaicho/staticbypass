@@ -118,12 +118,13 @@ def main():
     formattedCode = templateCode.format(imports=imports, shellcode=shellcode, codeblocks=codeblocks, transformers=transformers, shellcodeSize=shellcodeSize)
     f.write(formattedCode)
     f.close()
+    print(f'Source code saved to {args.output}.{args.language}')
 
     # Compile file
     if args.language == 'c':
         outfile = f'{args.output}.exe'
         temp = ['x86_64-w64-mingw32-gcc', f'{args.output}.{args.language}', '-o', outfile, '-Wall'] + compilerOptions
-        result = subprocess.run(['x86_64-w64-mingw32-gcc' , f'{args.output}.{args.language}', '-o', outfile, ] + compilerOptions)
+        result = subprocess.run(['x86_64-w64-mingw32-gcc' , f'{args.output}.{args.language}', '-o', outfile, ] + compilerOptions, check=True)
         if result.returncode == 0:
             print(f'Payload saved to {outfile}')
     elif args.language == 'cs':
@@ -132,9 +133,9 @@ def main():
         else:
             outfile = args.output
         if platform.system() == 'Windows':
-            result = subprocess.run(['C:\\windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe', f'{args.output}.{args.language}', f'-out:{outfile}'])
+            result = subprocess.run(['C:\\windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe', f'{args.output}.{args.language}', f'-out:{outfile}'], check=True)
         elif platform.system() == 'Linux':
-            result = subprocess.run(['mcs', f'{args.output}.{args.language}', f'-out:{outfile}'])
+            result = subprocess.run(['mcs', f'{args.output}.{args.language}', f'-out:{outfile}'], check=True)
         if result.returncode == 0:
             print(f'Payload saved to {outfile}')
     elif args.language == 'vba':
@@ -145,15 +146,17 @@ def main():
         outfile = f'{args.output}.ps1'
     elif args.language == 'rs':
         if args.output.lower()[-4:] != '.exe':
+            outfolder = args.output
             outfile = args.output + '.exe'
         else:
+            outfolder = args.output[0:-4]
             outfile = args.output
-        shutil.rmtree('output', ignore_errors=True)
-        os.makedirs(f'output/src/', exist_ok=True)
-        open(f'output/src/main.rs', 'w').write(formattedCode)
-        open(f'output/Cargo.toml', 'w').write(f"""
+        shutil.rmtree(f'{outfolder}', ignore_errors=True)
+        os.makedirs(f'{outfolder}/src/', exist_ok=True)
+        open(f'{outfolder}/src/main.rs', 'w').write(formattedCode)
+        open(f'{outfolder}/Cargo.toml', 'w').write(f"""
 [package]
-name = "output"
+name = "{outfolder}"
 version = "0.1.0"
 edition = "2021"
 
@@ -162,8 +165,8 @@ edition = "2021"
 
 [profile.release]
 """)
-        result = subprocess.run(['cargo', 'build', '--release', '--target', 'x86_64-pc-windows-gnu'], cwd='output')
-        shutil.copy('output/target/x86_64-pc-windows-gnu/release/output.exe', outfile)
+        result = subprocess.run(['cargo', 'build', '--release', '--target', 'x86_64-pc-windows-gnu'], cwd=outfolder, check=True)
+        shutil.copy(f'{outfolder}/target/x86_64-pc-windows-gnu/release/{outfile}', outfile)
         if result.returncode == 0:
             print(f'Payload saved to {outfile}')
 
