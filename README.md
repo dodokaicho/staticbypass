@@ -92,7 +92,7 @@ pip install -r requirements.txt
 | Obfuscator    | C   | C# | PowerShell | VBA | Rust | Description |
 |:-------------:|:---:|:--:|:----------:|:---:|:----:|:-----------:|
 | Base64Encode  | ✅ | ✅ | ✅ | ✅ | ✅ | Base64 Encode |
-| DictObfuscate | ✅ | ✅ | ✅ | ✅ | ❌ | Convert bytes into randomly picked dictionary words. Uses wordlists/english.txt |
+| DictObfuscate | ✅ | ✅ | ✅ | ✅ | ✅ | Convert bytes into randomly picked dictionary words. Uses wordlists/english.txt |
 | IPv4Obfuscate | ✅ | ✅ | ✅ | ✅ | ✅ | Convert bytes into IPv4 addresses |
 | IPv6Obfuscate | ✅ | ✅ | ✅ | ✅ | ✅ | Convert bytes into IPv6 addresses |
 | MACObfuscate  | ✅ | ✅ | ✅ | ✅ | ✅ | Convert bytes into MAC addresses |
