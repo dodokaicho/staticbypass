@@ -108,17 +108,22 @@ def main():
     #else:
     #transformers = transformers.format(shellcode='obfuscated')
 
-    
-    if args.delivery:
-        deliverySpec = importlib.util.spec_from_file_location(args.delivery, f'{args.language}/delivery/{args.delivery}.py')
-        deliveryModule = importlib.util.module_from_spec(deliverySpec)
-        sys.modules[deliverySpec.name] = deliveryModule 
-        deliverySpec.loader.exec_module(deliveryModule)
-        deliveryObject = getattr(deliveryModule, args.delivery)(shellcode)
-        codeblocks += getattr(deliveryObject, 'codeblock')()
-        transformers = getattr(deliveryObject, 'transformer')(transformers)
-        imports += getattr(deliveryObject, 'imports')()
-        compilerOptions += getattr(deliveryObject, 'compilerOptions')()
+    split = str(args.delivery).split(',')
+    deliveryItem = split[0]
+    arguments = {}
+    if (len(split) != 1):
+        for item in split[1:]:
+            splitItems = item.split('=')
+            arguments[splitItems[0]] = splitItems[1]
+    deliverySpec = importlib.util.spec_from_file_location(deliveryItem, f'{args.language}/delivery/{deliveryItem}.py')
+    deliveryModule = importlib.util.module_from_spec(deliverySpec)
+    sys.modules[deliverySpec.name] = deliveryModule 
+    deliverySpec.loader.exec_module(deliveryModule)
+    deliveryObject = getattr(deliveryModule, deliveryItem)(shellcode, arguments)
+    codeblocks += getattr(deliveryObject, 'codeblock')()
+    transformers = getattr(deliveryObject, 'transformer')(transformers)
+    imports += getattr(deliveryObject, 'imports')()
+    compilerOptions += getattr(deliveryObject, 'compilerOptions')()
     
 
     # Place shellcode in correct format
