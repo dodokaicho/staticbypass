@@ -11,7 +11,7 @@ from utils.utils import str_to_cs
 
 class RSAEncrypt:
 
-    def __init__(self):
+    def __init__(self, arguments):
         self.key = RSA.generate(2048)
         self.name = ''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(16))
         self.private_key = self.privKeyXML(self.key.export_key(format='DER', pkcs=1))

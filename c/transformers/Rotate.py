@@ -4,8 +4,12 @@ import random
 
 class Rotate:
 
-    def __init__(self):
+    def __init__(self, arguments):
         self.name = ''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(16))
+        if 'bits' in arguments:
+            self.bits = int(arguments['bits'])
+        else:
+            self.bits = 4
 
     def imports(self):
         return []
@@ -14,18 +18,18 @@ class Rotate:
         return []
 
     def codeblock(self):
-        return """
+        return f"""
 
-unsigned char *{name}(const unsigned char *encoded)
+unsigned char *{self.name}(const unsigned char *encoded)
 {{
-    int len = {plaintextSize};
+    int len = {self.plaintextSize};
     unsigned char * decoded = malloc(len);
     for (int i=0; i<len; i++){{
-        decoded[i] = (encoded[i] >> 4) | (encoded[i] << 4);
+        decoded[i] = (encoded[i] >> {self.bits}) | (encoded[i] << {8 - self.bits});
     }}
     return decoded;
 }}
-""".format(name=self.name, plaintextSize = self.plaintextSize)
+"""
 
     def transformer(self, shellcodestring):
         return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
@@ -34,5 +38,5 @@ unsigned char *{name}(const unsigned char *encoded)
         self.plaintextSize = len(plaintext)
         encoded = b''
         for i in range(len(plaintext)):
-            encoded += (((plaintext[i] << 4) | (plaintext[i] >> 4)) & 255).to_bytes(1)
+            encoded += ((plaintext[i] << (self.bits) | (plaintext[i] >> (8 - self.bits))) & 255).to_bytes(1)
         return encoded

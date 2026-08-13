@@ -14,7 +14,6 @@ def bytes_to_c(bytestring, name):
     return f'static const unsigned char {name}[] = ' + '{' + ','.join([f'{hex(val)}' for val in bytestring]) + '};'
 
 def str_to_c(string, name):
-
     return f'static const unsigned char {name}[] = "{string}\\0";'
 
 def list_to_c(itemList, name):
@@ -22,14 +21,10 @@ def list_to_c(itemList, name):
     return f'static const unsigned char *{name}[] = {{{encodedString}}};'
 
 def bytes_to_vba(bytestring, name):
-    arrayString = f'Dim {name}() As Variant: {name} = Array('
-    for i in range(0, len(bytestring), 100):
-        subset = bytestring[i:i+100]
-        if len(subset) < 100:
-            arrayString += f'{','.join([f'{subset[i]}' for i in range(0, len(subset))])})\n'
-        else:
-            arrayString += f'{','.join([f'{subset[i]}' for i in range(0, 100)])}, _\n'
+    arrayString = f'\tDim {name}(0 To {len(bytestring) - 1}) As Byte\n'
 
+    for i in range(0, len(bytestring)):
+        arrayString += f'\t{name}({i}) = {bytestring[i]}\n'
     return arrayString
 
 def str_to_vba(string, name):

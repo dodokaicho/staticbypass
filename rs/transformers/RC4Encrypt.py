@@ -6,9 +6,12 @@ import random
 
 class RC4Encrypt:
 
-    def __init__(self):
+    def __init__(self, arguments):
         self.name = ''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(16))
-        self.key = os.urandom(16)
+        if 'key' in arguments:
+            self.key = arguments['key'].encode()
+        else:
+            self.key = os.urandom(16)
 
     def imports(self):
         return ['extern crate rc4;',

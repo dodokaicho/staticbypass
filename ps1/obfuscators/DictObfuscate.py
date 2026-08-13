@@ -50,7 +50,7 @@ function {name} {{
 """.format(name = self.name, dictionary=dict_to_ps1(self.dictdecode, 'dictionary'))
 
     def transformer(self, shellcodestring):
-        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
+        return shellcodestring.format(shellcode=f'{{shellcode}} | {self.name}')
 
     def obfuscate(self, decoded):
         encoded = ''
