@@ -78,7 +78,7 @@ pip install -r requirements.txt
 | Delivery  | C  | C# | PowerShell | VBA | Rust | Description |
 |:-------------:|:--:|:--:|:----------:|:---:|:----:|:-----------:|
 | embedded      | ✅ | ✅ | ✅ | ✅ | ✅ | Shellcode is stored within the executable |
-| webdelivery   | ❌ | ✅ | ❌ | ❌ | ❌ | Download string or raw bytes from specified url |
+| webdelivery   | ✅ | ✅ | ❌ | ❌ | ❌ | Download string or raw bytes from specified url |
 
 | Preprocessor  | C  | C# | PowerShell | VBA | Rust | Description |
 |:-------------:|:--:|:--:|:----------:|:---:|:----:|:-----------:|
@@ -162,7 +162,7 @@ class Base64Encode:
     # Define any variables created when the object is created
     # For example, you may randomize the name to prevent function
     # name clashes
-    def __init__(self):
+    def __init__(self, arguments):
         self.name = ''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(16))
 
     # Return any imports your code uses
