@@ -11,7 +11,7 @@ class Brainfuck:
 
     def codeblock(self):
         return """
-unsigned char * {name}(const unsigned char *encoded)
+unsigned char * {name}(unsigned char *encoded)
 {{
     unsigned char *out = calloc({size}, sizeof(unsigned char));
     unsigned char *stack = calloc(10, sizeof(unsigned char));

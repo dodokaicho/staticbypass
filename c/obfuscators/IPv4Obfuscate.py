@@ -11,7 +11,7 @@ class IPv4Obfuscate:
 
     def codeblock(self):
         return """
-unsigned char * {name}(const unsigned char *encoded[])
+unsigned char * {name}(unsigned char *encoded[])
 {{
     int size = {size};
     unsigned char *out = malloc(size*4);

@@ -14,7 +14,7 @@ class Base64Encode:
     def codeblock(self):
         return """
 
-unsigned char* {name}(const char* base64Str) {{
+unsigned char* {name}(char* base64Str) {{
 
     // 1. Calculate the required buffer size
     DWORD binaryLen = 0;

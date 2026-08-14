@@ -15,7 +15,7 @@ class UUIDEncode:
 
     def codeblock(self):
         return """
-unsigned char * {name}(const unsigned char *uuids[])
+unsigned char * {name}(unsigned char *uuids[])
 {{
     int size = {size};
     UUID binaryUUID;
