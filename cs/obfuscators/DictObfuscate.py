@@ -1,8 +1,8 @@
 import random
 import string
 from utils.utils import list_to_c
-import os
 import json
+import time
 
 class DictObfuscate:
 

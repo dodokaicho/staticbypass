@@ -1,28 +1,12 @@
-import os
 from utils.utils import bytes_to_vba
-from Crypto.Cipher import ARC4
-import string
-import random
+from common.transformers.RC4Encrypt import RC4EncryptBase
 
-class RC4Encrypt:
-
-    def __init__(self, arguments):
-        self.name = ''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(16))
-        if 'key' in arguments:
-            self.key = arguments['key'].encode()
-        else:
-            self.key = os.urandom(16)
-
-    def compilerOptions(self):
-        return []
-
-    def imports(self):
-        return []
+class RC4Encrypt(RC4EncryptBase):
 
     def codeblock(self):
-        return """
-Function {name}(ciphertext() As Byte) As Byte()
-    {key}
+        return f"""
+Function {self.name}(ciphertext() As Byte) As Byte()
+    {bytes_to_vba(self.key, 'key')}
     Dim S(0 To 255) As Byte
     Dim i As Long, j As Long, k As Long, t As Byte, n As Long
     Dim keyLen As Long, cipherLen As Long
@@ -54,14 +38,6 @@ Function {name}(ciphertext() As Byte) As Byte()
         outBytes(n) = ciphertext(LBound(ciphertext) + n) Xor k
     Next n
 
-    {name} = outBytes
+    {self.name} = outBytes
 End Function
-""".format(name=self.name, key = bytes_to_vba(self.key, 'key'), shellcodeSize=self.shellcodeSize)
-
-    def encode(self, plaintext):
-        self.shellcodeSize = len(plaintext)
-        cipher = ARC4.new(self.key)
-        return cipher.encrypt(plaintext)
-
-    def transformer(self, shellcodestring):
-        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
+"""

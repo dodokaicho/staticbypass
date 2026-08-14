@@ -1,27 +1,11 @@
-import os
 from utils.utils import bytes_to_ps1
-from Crypto.Cipher import ARC4
-import string
-import random
+from common.transformers.RC4Encrypt import RC4EncryptBase
 
-class RC4Encrypt:
-
-    def __init__(self, arguments):
-        self.name = ''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(16))
-        if 'key' in arguments:
-            self.key = arguments['key'].encode()
-        else:
-            self.key = os.urandom(16)
-
-    def compilerOptions(self):
-        return []
-
-    def imports(self):
-        return []
+class RC4Encrypt(RC4EncryptBase):
 
     def codeblock(self):
-        return """
-function {name} {{
+        return f"""
+function {self.name} {{
     [CmdletBinding()]
     [OutputType([byte[]])]
     param(
@@ -38,7 +22,7 @@ function {name} {{
 
         $ciphertext = $buffer.ToArray()
 
-        {key}
+        {bytes_to_ps1(self.key, 'Key')}
         # --- Key Scheduling Algorithm (KSA) ---
         $S = New-Object 'byte[]' 256
         for ($i = 0; $i -lt 256; $i++) {{
@@ -66,12 +50,7 @@ function {name} {{
 
     }}
 }}
-""".format(name=self.name, key = bytes_to_ps1(self.key, 'Key'))
-
-    def encode(self, plaintext):
-        self.shellcodeSize = len(plaintext)
-        cipher = ARC4.new(self.key)
-        return cipher.encrypt(plaintext)
+"""
 
     def transformer(self, shellcodestring):
         return shellcodestring.format(shellcode=f'{{shellcode}} | {self.name}')

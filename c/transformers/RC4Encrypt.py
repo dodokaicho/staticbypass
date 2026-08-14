@@ -1,32 +1,16 @@
-import os
+from common.transformers.RC4Encrypt import RC4EncryptBase
 from utils.utils import bytes_to_c
-from Crypto.Cipher import ARC4
-import string
-import random
 
-class RC4Encrypt:
-
-    def __init__(self, arguments):
-        self.name = ''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(16))
-        if 'key' in arguments:
-            self.key = arguments['key'].encode()
-        else:
-            self.key = os.urandom(16)
-
-    def compilerOptions(self):
-        return []
-
-    def imports(self):
-        return []
+class RC4Encrypt(RC4EncryptBase):
 
     def codeblock(self):
-        return """
-unsigned char * {name}(unsigned char * ciphertext){{
+        return f"""
+unsigned char * {self.name}(unsigned char * ciphertext){{
 
-    {key}
+    {bytes_to_c(self.key, 'key')}
     int N = 256;
     unsigned char S[256];
-    unsigned char *plaintext = malloc({shellcodeSize});
+    unsigned char *plaintext = malloc({self.shellcodeSize});
     int keyLen = sizeof(key);
     int j = 0;
     int tmp = 0;
@@ -45,7 +29,7 @@ unsigned char * {name}(unsigned char * ciphertext){{
     int i = 0;
     j = 0;
 
-    for(size_t n = 0; n < {shellcodeSize}; n++) {{
+    for(size_t n = 0; n < {self.shellcodeSize}; n++) {{
         i = (i + 1) % N;
         j = (j + S[i]) % N;
 
@@ -59,12 +43,4 @@ unsigned char * {name}(unsigned char * ciphertext){{
 
     return plaintext;
 }}
-""".format(name=self.name, key = bytes_to_c(self.key, 'key'), shellcodeSize=self.shellcodeSize)
-
-    def encode(self, plaintext):
-        self.shellcodeSize = len(plaintext)
-        cipher = ARC4.new(self.key)
-        return cipher.encrypt(plaintext)
-
-    def transformer(self, shellcodestring):
-        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
+"""

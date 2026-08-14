@@ -1,29 +1,13 @@
-import os
 from utils.utils import bytes_to_cs
-from Crypto.Cipher import ARC4
-import string
-import random
+from common.transformers.RC4Encrypt import RC4EncryptBase
 
-class RC4Encrypt:
-
-    def __init__(self, arguments):
-        self.name = ''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(16))
-        if 'key' in arguments:
-            self.key = arguments['key'].encode()
-        else:
-            self.key = os.urandom(16)
-
-    def compilerOptions(self):
-        return []
-
-    def imports(self):
-        return []
+class RC4Encrypt(RC4EncryptBase):
 
     def codeblock(self):
-        return """
-    public static byte[] {name}(byte[] data)
+        return f"""
+    public static byte[] {self.name}(byte[] data)
     {{
-        {key}
+        {bytes_to_cs(self.key, 'key')}
         byte[] S = new byte[256];
         byte[] T = new byte[256];
 
@@ -60,11 +44,5 @@ class RC4Encrypt:
         }}
 
         return result;
-    }}""".format(name=self.name, key = bytes_to_cs(self.key, 'key'))
+    }}"""
 
-    def encode(self, plaintext):
-        cipher = ARC4.new(self.key)
-        return cipher.encrypt(plaintext)
-
-    def transformer(self, shellcodestring):
-        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')

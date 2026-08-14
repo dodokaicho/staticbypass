@@ -1,17 +1,9 @@
-import os
-from utils.utils import bytes_to_rs, generateFunctionName
-from Crypto.Cipher import ARC4
-import string
-import random
+from utils.utils import bytes_to_rs
+from common.transformers.RC4Encrypt import RC4EncryptBase
 
-class RC4Encrypt:
+class RC4Encrypt(RC4EncryptBase):
 
-    def __init__(self, arguments):
-        self.name = ''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(16))
-        if 'key' in arguments:
-            self.key = arguments['key'].encode()
-        else:
-            self.key = os.urandom(16)
+
 
     def imports(self):
         return ['extern crate rc4;',
@@ -32,11 +24,6 @@ fn {self.name}(encrypted_data: &[u8]) -> Vec<u8>{{
     plaintext.to_vec()
 }}
 """
-
-    def encode(self, plaintext):
-        self.shellcodeSize = len(plaintext)
-        cipher = ARC4.new(self.key)
-        return cipher.encrypt(plaintext)
 
     def transformer(self, shellcodestring):
         return shellcodestring.format(shellcode=f'{self.name}(&{{shellcode}})')
