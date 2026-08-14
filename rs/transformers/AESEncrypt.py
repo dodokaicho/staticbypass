@@ -3,9 +3,6 @@ from common.transformers.AESEncrypt import AESEncryptBase
 
 class AESEncrypt(AESEncryptBase):
 
-    def __init__(self, arguments):
-        super().__init__(arguments) 
-
     def imports(self):
         return ["extern crate aes;", 
                 "extern crate cbc;", 
