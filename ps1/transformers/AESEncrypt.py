@@ -1,22 +1,10 @@
-import random
-import string
 from utils.utils import bytes_to_ps1
-import os
-from Crypto.Cipher import AES
-from Crypto.Util import Padding
+from common.transformers.AESEncrypt import AESEncryptBase
 
-class AESEncrypt:
+class AESEncrypt(AESEncryptBase):
 
     def __init__(self, arguments):
-        self.name = ''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(16))
-        if 'key' in arguments:
-            self.key = arguments['key'].encode()
-        else:
-            self.key = os.urandom(32)
-        if 'iv' in arguments:
-            self.iv = arguments['iv'].encode()
-        else:
-            self.iv = os.urandom(16)
+        super().__init__(arguments) 
 
     def compilerOptions(self):
         return []
@@ -61,13 +49,6 @@ function {self.name} {{
     }}
 }}
 """
-
-    def encode(self, plaintext):
-        cipher = AES.new(self.key, AES.MODE_CBC, self.iv)
-        self.plaintextSize = len(plaintext)
-        encrypted = cipher.encrypt(Padding.pad(plaintext, 16, style='pkcs7'))
-        self.ciphertextSize = len(encrypted)
-        return encrypted
 
     def transformer(self, shellcodestring):
         return shellcodestring.format(shellcode=f'{{shellcode}} | {self.name}')
