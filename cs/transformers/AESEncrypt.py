@@ -7,9 +7,6 @@ class AESEncrypt(AESEncryptBase):
     def __init__(self, arguments):
         super().__init__(arguments) 
 
-    def compilerOptions(self):
-        return []
-
     def imports(self):
         return ["using System.Security.Cryptography;"]
 

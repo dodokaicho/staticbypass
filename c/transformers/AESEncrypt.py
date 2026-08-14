@@ -99,6 +99,3 @@ cleanup:
     return plaintext;
 }}
 """
-
-    def transformer(self, shellcodestring):
-        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
