@@ -11,6 +11,13 @@ import subprocess
 import codecs
 from utils.inject import create_word_doc
 
+def load_module(language, category, item):
+    spec = importlib.util.spec_from_file_location(item, f'{language}/{category}/{item}.py')
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return getattr(module, item)
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-e', "--transformers", type=str, nargs='*', required=False, help='Transformers encrypt or encode the shellcode and is decrypted or decoded at runtime.')
@@ -45,13 +52,9 @@ def main():
     if args.preprocessors:
         preprocessorsList = args.preprocessors.split(',')
         for preprocessorItem in preprocessorsList:
-            preprocessorSpec = importlib.util.spec_from_file_location(preprocessorItem, f'{args.language}/preprocessors/{preprocessorItem}.py')
-            preprocessorModule = importlib.util.module_from_spec(preprocessorSpec)
-            sys.modules[preprocessorSpec.name] = preprocessorModule 
-            preprocessorSpec.loader.exec_module(preprocessorModule)
-            prprocessorObject = getattr(preprocessorModule, preprocessorItem)()
-            preprocessorFunction = getattr(prprocessorObject, 'apply')
-            shellcode = preprocessorFunction(shellcode)
+            preprocessorObject = load_module(args.language, 'preprocessors', preprocessorItem)()
+            shellcode = preprocessorObject.apply(shellcode)
+            #shellcode = preprocessorFunction(shellcode)
 
     shellcodeSize = len(shellcode)
 
@@ -64,21 +67,15 @@ def main():
                 for item in split[1:]:
                     splitItems = item.split('=')
                     arguments[splitItems[0]] = splitItems[1]
-            transformersSpec = importlib.util.spec_from_file_location(transformersItem, f'{args.language}/transformers/{transformersItem}.py')
-            transformersModule = importlib.util.module_from_spec(transformersSpec)
-            sys.modules[transformersSpec.name] = transformersModule 
-            transformersSpec.loader.exec_module(transformersModule)
-            transformersObject = getattr(transformersModule, transformersItem)(arguments)
-            transformersFunction = getattr(transformersObject, 'encode')
-            transformedShellcode = transformersFunction(shellcode)
-            codeblocks += getattr(transformersObject, 'codeblock')()
-            transformers = getattr(transformersObject, 'transformer')(transformers)
-            compilerOptions += getattr(transformersObject, 'compilerOptions')()
-            imports += getattr(transformersObject, 'imports' )()
+            transformersObject = load_module(args.language, 'transformers', transformersItem)(arguments)
+            transformedShellcode = transformersObject.encode(shellcode)
+            codeblocks += transformersObject.codeblock()
+            transformers = transformersObject.transformer(transformers)
+            compilerOptions += transformersObject.compilerOptions()
+            imports += transformersObject.imports()
             shellcode = transformedShellcode
 
     # Obfuscate shellcode
-
     if args.obfuscator:
         split = str(args.obfuscator).split(',')
         obfuscator = split[0]
@@ -87,34 +84,20 @@ def main():
             for item in split[1:]:
                 splitItems = item.split('=')
                 arguments[splitItems[0]] = splitItems[1]
-        obfuscatorSpec = importlib.util.spec_from_file_location(obfuscator, f'{args.language}/obfuscators/{obfuscator}.py')
-        obfuscatorModule = importlib.util.module_from_spec(obfuscatorSpec)
-        sys.modules[obfuscatorSpec.name] = obfuscatorModule 
-        obfuscatorSpec.loader.exec_module(obfuscatorModule)
-        obfuscatorObject = getattr(obfuscatorModule, obfuscator)(arguments)
-        obfuscatorFunction = getattr(obfuscatorObject, 'obfuscate')
-        obfuscatedShellcode = obfuscatorFunction(shellcode)
-        codeblocks += getattr(obfuscatorObject, 'codeblock')()
-        transformers = getattr(obfuscatorObject, 'transformer')(transformers)
-        imports += getattr(obfuscatorObject, 'imports')()
-        compilerOptions += getattr(obfuscatorObject, 'compilerOptions')()
+        obfuscatorObject = load_module(args.language, 'obfuscators', obfuscator)(arguments)
+        obfuscatedShellcode = obfuscatorObject.obfuscate(shellcode)
+        codeblocks += obfuscatorObject.codeblock()
+        transformers = obfuscatorObject.transformer(transformers)
+        imports += obfuscatorObject.imports()
+        compilerOptions += obfuscatorObject.compilerOptions()
         shellcode = obfuscatedShellcode
 
     # Load template options
-    templateSpec = importlib.util.spec_from_file_location(args.template, f'{args.language}/templates/{args.template}.py')
-    templateModule = importlib.util.module_from_spec(templateSpec)
-    sys.modules[templateSpec.name] = templateModule 
-    templateSpec.loader.exec_module(templateModule)
-    templateObject = getattr(templateModule, args.template)()
-    templateCode = getattr(templateObject, 'template')()
-    compilerOptions += getattr(templateObject, 'compilerOptions')()
-    imports = getattr(templateObject, 'imports')() + imports
+    templateObject = load_module(args.language, 'templates', args.template)()
+    templateCode = templateObject.template()
+    compilerOptions += templateObject.compilerOptions()
+    imports = templateObject.imports() + imports
 
-    # Rename obfuscated shellcode
-    #if args.language == 'ps1':
-    #    transformers = transformers.format(shellcode='$obfuscated')
-    #else:
-    #transformers = transformers.format(shellcode='obfuscated')
 
     split = str(args.delivery).split(',')
     deliveryItem = split[0]
@@ -123,19 +106,11 @@ def main():
         for item in split[1:]:
             splitItems = item.split('=')
             arguments[splitItems[0]] = splitItems[1]
-    deliverySpec = importlib.util.spec_from_file_location(deliveryItem, f'{args.language}/delivery/{deliveryItem}.py')
-    deliveryModule = importlib.util.module_from_spec(deliverySpec)
-    sys.modules[deliverySpec.name] = deliveryModule 
-    deliverySpec.loader.exec_module(deliveryModule)
-    deliveryObject = getattr(deliveryModule, deliveryItem)(shellcode, arguments)
-    codeblocks += getattr(deliveryObject, 'codeblock')()
-    transformers = getattr(deliveryObject, 'transformer')(transformers)
-    imports += getattr(deliveryObject, 'imports')()
-    compilerOptions += getattr(deliveryObject, 'compilerOptions')()
-    
-
-    # Place shellcode in correct format
-    #shellcode = globals()[f'{type(shellcode).__name__}_to_{args.language}'](shellcode, 'obfuscated')
+    deliveryObject = load_module(args.language, 'delivery', deliveryItem)(shellcode, arguments)
+    codeblocks += deliveryObject.codeblock()
+    transformers = deliveryObject.transformer(transformers)
+    imports += deliveryObject.imports()
+    compilerOptions += deliveryObject.compilerOptions()
 
     # Remove duplicates while retaining order
     imports = '\n'.join(list(dict.fromkeys(imports)))
@@ -148,6 +123,7 @@ def main():
         f = codecs.open(f'{args.output}.{args.language}', 'w', 'utf-8-sig')
     else:
         f = open(f'{args.output}.{args.language}', 'w')
+
     formattedCode = templateCode.format(imports=imports, shellcode='', codeblocks=codeblocks, transformers=transformers, shellcodeSize=shellcodeSize)
     f.write(formattedCode)
     f.close()

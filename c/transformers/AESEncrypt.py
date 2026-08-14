@@ -1,22 +1,12 @@
-import os
 from utils.utils import bytes_to_c
 from Crypto.Cipher import AES
 from Crypto.Util import Padding
-import string
-import random
+from common.transformers.AESEncrypt import AESEncryptBase
 
-class AESEncrypt:
+class AESEncrypt(AESEncryptBase):
 
     def __init__(self, arguments):
-        self.name = ''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(16))
-        if 'key' in arguments:
-            self.key = arguments['key'].encode()
-        else:
-            self.key = os.urandom(32)
-        if 'iv' in arguments:
-            self.iv = arguments['iv'].encode()
-        else:
-            self.iv = os.urandom(16)
+        super().__init__(arguments) 
 
     def imports(self):
         return ["#include <bcrypt.h>", "#include <string.h>", "#pragma comment(lib, \"bcrypt.lib\")"]
@@ -25,14 +15,14 @@ class AESEncrypt:
         return ['-lbcrypt']
 
     def codeblock(self):
-        return """
+        return f"""
 
-unsigned char *{name}(const unsigned char *ciphertext)
+unsigned char *{self.name}(const unsigned char *ciphertext)
 {{
 
-    {key}
-    {iv}
-    DWORD ciphertext_len = {ciphertextSize};
+    {bytes_to_c(self.key, 'key')}
+    {bytes_to_c(self.iv, 'iv')}
+    DWORD ciphertext_len = {self.ciphertextSize};
     DWORD key_len = sizeof(key);
     BCRYPT_ALG_HANDLE  hAlg       = NULL;
     BCRYPT_KEY_HANDLE  hKey       = NULL;
@@ -108,14 +98,7 @@ cleanup:
 
     return plaintext;
 }}
-""".format(name=self.name, key=bytes_to_c(self.key, 'key'), iv=bytes_to_c(self.iv, 'iv'), ciphertextSize = self.ciphertextSize)
+"""
 
     def transformer(self, shellcodestring):
         return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
-
-    def encode(self, plaintext):
-        cipher = AES.new(self.key, AES.MODE_CBC, self.iv)
-        self.plaintextSize = len(plaintext)
-        encrypted = cipher.encrypt(Padding.pad(plaintext, 16, style='pkcs7'))
-        self.ciphertextSize = len(encrypted)
-        return encrypted
