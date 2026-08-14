@@ -15,7 +15,7 @@ class EmojiEncode:
 
     def codeblock(self):
         return """
-unsigned char * {name}(unsigned char *encoded)
+unsigned char * {name}(const unsigned char *encoded)
 {{
     int length = strlen(encoded);
     unsigned char *out = malloc(length/4);

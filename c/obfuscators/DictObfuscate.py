@@ -27,7 +27,7 @@ class DictObfuscate:
         wordArray = list_to_c([self.dictencode[i] for i in range(0, 256)], 'wordArray')
 
         return """
-unsigned char * {name}(unsigned char* encoded)
+unsigned char * {name}(const unsigned char* encoded)
 {{
     int size = {size};
     unsigned char *buffer = strdup(encoded);

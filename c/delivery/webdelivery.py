@@ -13,13 +13,13 @@ class webdelivery:
             outfile = 'output.txt'
         shellcodetype = type(shellcode).__name__
         if shellcodetype == 'bytes':
-            self.type = 'unsigned char *'
+            self.type = 'const unsigned char *'
             open(outfile, 'wb').write(shellcode)
         elif shellcodetype == 'str':
-            self.type = 'unsigned char *'
+            self.type = 'const unsigned char *'
             open(outfile, 'w').write(shellcode)
         elif shellcodetype == 'list':
-            self.type = 'unsigned char **'
+            self.type = 'const unsigned char **'
             open(outfile, 'w').write('\n'.join(shellcode))
             self.listLength = len(shellcode)
         print(f'Writing obfuscated shellcode to {outfile}')
@@ -79,7 +79,7 @@ class webdelivery:
 """
 
 
-        if self.type == 'unsigned char **':
+        if self.type == 'const unsigned char **':
             codeblock += f"""
     unsigned char **array = malloc(sizeof(unsigned char *) * {self.listLength});
     char* token = strtok(obfuscated, "\\n");
@@ -91,7 +91,7 @@ class webdelivery:
         token = strtok(NULL, "\\n");
     }}
 
-    return array;
+    return (const unsigned char **)array;
 }}
 """ 
         else:
