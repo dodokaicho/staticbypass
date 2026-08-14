@@ -1,21 +1,4 @@
-import tempfile
-import subprocess
-import os
-import platform
+from common.preprocessors.mkpivm64 import mkpivm64Base
 
-class mkpivm64:
-
-    def apply(self, shellcode):
-        fd, filename = tempfile.mkstemp()
-        with os.fdopen(fd, 'wb') as f:
-            f.write(shellcode)
-        outtf, outfilename = tempfile.mkstemp()
-        if platform.system() == 'Linux':
-            result = subprocess.run(['wine', './bin/mkpivm64.exe', f'{filename}', '-o', f'{outfilename}'])
-        else:
-            result = subprocess.run(['./bin/mkpivm64.exe', f'{filename}', '-o', f'{outfilename}'])
-        if result.returncode == 0:
-            output = os.fdopen(outtf, 'rb').read()
-        os.remove(filename)
-        os.remove(outfilename)
-        return output
+class mkpivm64(mkpivm64Base):
+    pass
