@@ -4,7 +4,7 @@ from utils.utils import *
 
 class embedded:
 
-    def __init__(self, shellcode):
+    def __init__(self, shellcode, arguments):
         self.name = ''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(16))
         shellcodeType = type(shellcode).__name__
         if shellcodeType == "str":

