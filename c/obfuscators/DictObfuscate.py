@@ -1,15 +1,20 @@
 import random
 import string
 from utils.utils import list_to_c
+import time
 
 class DictObfuscate:
 
-    def __init__(self):
+    def __init__(self, arguments):
         self.name = ''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(16))
+        if 'seed' in arguments:
+            self.rng = random.Random(arguments['seed'])
+        else:
+            self.rng = random.Random(time.time())
         self.dictencode = {}
         self.dictdecode = []
         wordlist = open('wordlists/english.txt', 'r').readlines()
-        randomNumbers = random.sample(range(0, len(wordlist)), 256)
+        randomNumbers = self.rng.sample(range(0, len(wordlist)), 256)
         for i in range(0, 256):
             word = wordlist[randomNumbers[i]].strip()
             self.dictencode[i] = word

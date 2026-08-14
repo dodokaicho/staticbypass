@@ -7,7 +7,7 @@ from itertools import cycle
 
 class UUIDEncode:
 
-    def __init__(self):
+    def __init__(self, arguments):
         self.name = ''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(16))
 
     def imports(self):

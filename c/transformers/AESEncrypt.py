@@ -4,6 +4,7 @@ from Crypto.Cipher import AES
 from Crypto.Util import Padding
 import string
 import random
+import time.time()
 
 class AESEncrypt:
 

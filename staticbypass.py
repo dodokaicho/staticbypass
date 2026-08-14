@@ -78,12 +78,20 @@ def main():
             shellcode = transformedShellcode
 
     # Obfuscate shellcode
+
     if args.obfuscator:
-        obfuscatorSpec = importlib.util.spec_from_file_location(args.obfuscator, f'{args.language}/obfuscators/{args.obfuscator}.py')
+        split = str(args.obfuscator).split(',')
+        obfuscator = split[0]
+        arguments = {}
+        if (len(split) != 1):
+            for item in split[1:]:
+                splitItems = item.split('=')
+                arguments[splitItems[0]] = splitItems[1]
+        obfuscatorSpec = importlib.util.spec_from_file_location(obfuscator, f'{args.language}/obfuscators/{obfuscator}.py')
         obfuscatorModule = importlib.util.module_from_spec(obfuscatorSpec)
         sys.modules[obfuscatorSpec.name] = obfuscatorModule 
         obfuscatorSpec.loader.exec_module(obfuscatorModule)
-        obfuscatorObject = getattr(obfuscatorModule, args.obfuscator)()
+        obfuscatorObject = getattr(obfuscatorModule, obfuscator)(arguments)
         obfuscatorFunction = getattr(obfuscatorObject, 'obfuscate')
         obfuscatedShellcode = obfuscatorFunction(shellcode)
         codeblocks += getattr(obfuscatorObject, 'codeblock')()

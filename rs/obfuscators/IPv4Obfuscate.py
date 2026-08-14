@@ -3,7 +3,7 @@ import string
 
 class IPv4Obfuscate:
 
-    def __init__(self):
+    def __init__(self, arguments):
         self.name = ''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(16))
 
     def imports(self):
