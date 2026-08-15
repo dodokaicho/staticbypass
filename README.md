@@ -53,9 +53,8 @@ python3 staticbypass.py -s ~/shellcode.bin -e XOREncrypt,key=hellotherehellother
 
 
 ## Roadmap
-- Add options to obfuscator modules
 - Add obfuscator support for the different programming languages
-- Add language support e.g. go
+- Add language support for go
 - Add more templates e.g. early bird apc injection, heap allocation
 - Refactor code
 
@@ -78,7 +77,7 @@ pip install -r requirements.txt
 | Delivery  | C  | C# | PowerShell | VBA | Rust | Description |
 |:-------------:|:--:|:--:|:----------:|:---:|:----:|:-----------:|
 | embedded      | ✅ | ✅ | ✅ | ✅ | ✅ | Shellcode is stored within the executable |
-| webdelivery   | ✅ | ✅ | ✅ | ❌ | ❌ | Download string or raw bytes from specified url |
+| webdelivery   | ✅ | ✅ | ✅ | ❌ | ✅ | Download string or raw bytes from specified url |
 
 | Preprocessor  | C  | C# | PowerShell | VBA | Rust | Description |
 |:-------------:|:--:|:--:|:----------:|:---:|:----:|:-----------:|

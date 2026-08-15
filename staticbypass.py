@@ -47,8 +47,6 @@ def main():
         transformers = 'let shellcode = {shellcode};'
     imports = []
 
-    # Transform shellcode
-
     if args.preprocessors:
         preprocessorsList = args.preprocessors.split(',')
         for preprocessorItem in preprocessorsList:
@@ -160,7 +158,7 @@ def main():
         else:
             outfolder = args.output[0:-4]
             outfile = args.output
-        shutil.rmtree(f'{outfolder}', ignore_errors=True)
+        #shutil.rmtree(f'{outfolder}', ignore_errors=True)
         os.makedirs(f'{outfolder}/src/', exist_ok=True)
         open(f'{outfolder}/src/main.rs', 'w').write(formattedCode)
         open(f'{outfolder}/Cargo.toml', 'w').write(f"""
