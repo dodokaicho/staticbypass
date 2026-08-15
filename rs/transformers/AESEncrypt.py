@@ -1,7 +1,22 @@
+import os
 from utils.utils import bytes_to_rs
-from common.transformers.AESEncrypt import AESEncryptBase
+from Crypto.Cipher import AES
+from Crypto.Util import Padding
+import string
+import random
 
-class AESEncrypt(AESEncryptBase):
+class AESEncrypt:
+
+    def __init__(self, arguments):
+        self.name = ''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(16))
+        if 'key' in arguments:
+            self.key = arguments['key'].encode()
+        else:
+            self.key = os.urandom(32)
+        if 'iv' in arguments:
+            self.iv = arguments['iv'].encode()
+        else:
+            self.iv = os.urandom(16)
 
     def imports(self):
         return ["extern crate aes;", 
@@ -28,3 +43,10 @@ fn {self.name}(encrypted_data: &[u8]) -> Vec<u8>{{
 
     def transformer(self, shellcodestring):
         return shellcodestring.format(shellcode=f'{self.name}(&{{shellcode}})')
+
+    def encode(self, plaintext):
+        cipher = AES.new(self.key, AES.MODE_CBC, self.iv)
+        self.plaintextSize = len(plaintext)
+        encrypted = cipher.encrypt(Padding.pad(plaintext, 16, style='pkcs7'))
+        self.ciphertextSize = len(encrypted)
+        return encrypted
