@@ -17,7 +17,6 @@ class IPv6Obfuscate:
             for (int i=0; i<encoded.Length; i++){{
                 string[] octets = encoded[i].Split(new [] {{':'}});
                 for (int j=0; j < 8; j += 1){{
-                    Console.WriteLine(octets[j]);
                     decoded[i*16+j*2] = (byte)Convert.ToInt32(octets[j].Substring(0, 2), 16);
                     decoded[i*16+j*2+1] = (byte)Convert.ToInt32(octets[j].Substring(2, 2), 16);
                 }}
