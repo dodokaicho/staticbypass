@@ -11,7 +11,7 @@ class IPv6Obfuscate:
 
     def codeblock(self):
         return f"""
-fn {self.name}(encoded: &[&str]) -> Vec<u8> {{
+fn {self.name}(encoded: &Vec<String>) -> Vec<u8> {{
     let mut decoded: [u8; {self.size}] = [0; {self.size}];
     for (i, ip) in encoded.iter().enumerate(){{
         let hextets: Vec<&str> = ip.split(':').collect();

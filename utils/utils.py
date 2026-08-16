@@ -77,7 +77,8 @@ def str_to_rs(string, name):
     return f'let {name} = String::from("{string}");'
 
 def list_to_rs(itemList, name):
-    return f'let {name}: [&str; {len(itemList)}] = [{','.join(f'"{s}"' for s in itemList)}];'
+    return f'let {name}: Vec<String> = vec![{','.join(f'"{s}"' for s in itemList)}].into_iter().map(|s| s.into()).collect();'
+    #return f'let {name}: [&str; {len(itemList)}] = [{','.join(f'"{s}"' for s in itemList)}];'
 
 def dict_to_rs(dictionary, name):
     outString = f'let {name} = HashMap::from(['

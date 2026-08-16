@@ -12,7 +12,8 @@ class embedded:
         elif shellcodeType == "bytes":
             self.type = f"[u8; {len(shellcode)}]"
         elif shellcodeType == "list":
-            self.type = f"[&'static str; {len(shellcode)}]"
+            #self.type = f"[&'static str; {len(shellcode)}]"
+            self.type = f"Vec<String>"
         self.shellcode = globals()[f'{type(shellcode).__name__}_to_rs'](shellcode, 'obfuscated')
 
     def imports(self):

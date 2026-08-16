@@ -15,7 +15,7 @@ class UUIDEncode:
 
     def codeblock(self):
         return f"""
-fn {self.name}(encoded: &[&str]) -> Vec<u8> {{
+fn {self.name}(encoded: &Vec<String>) -> Vec<u8> {{
     let mut decoded: [u8; {self.size}] = [0; {self.size}];
     for (i, uuidstring) in encoded.iter().enumerate(){{
         let  binaryuuid = Uuid::parse_str(uuidstring);
