@@ -77,7 +77,7 @@ pip install -r requirements.txt
 | Delivery  | C  | C# | PowerShell | VBA | Rust | Description |
 |:-------------:|:--:|:--:|:----------:|:---:|:----:|:-----------:|
 | embedded      | ✅ | ✅ | ✅ | ✅ | ✅ | Shellcode is stored within the executable |
-| webdelivery   | ✅ | ✅ | ✅ | ❌ | ✅ | Download string or raw bytes from specified url |
+| webdelivery   | ✅ | ✅ | ✅ | ✅ | ✅ | Download string or raw bytes from specified url |
 
 | Preprocessor  | C  | C# | PowerShell | VBA | Rust | Description |
 |:-------------:|:--:|:--:|:----------:|:---:|:----:|:-----------:|
