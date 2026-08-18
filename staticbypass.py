@@ -140,9 +140,9 @@ def main():
         else:
             outfile = args.output
         if platform.system() == 'Windows':
-            result = subprocess.run(['C:\\windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe', f'{args.output}.{args.language}', f'-out:{outfile}'], check=True)
+            result = subprocess.run(['C:\\windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe', f'{args.output}.{args.language}', f'-out:{outfile}'] + compilerOptions, check=True)
         elif platform.system() == 'Linux':
-            result = subprocess.run(['mcs', f'{args.output}.{args.language}', f'-out:{outfile}'], check=True)
+            result = subprocess.run(['mcs', f'{args.output}.{args.language}', f'-out:{outfile}'] + compilerOptions, check=True)
         if result.returncode == 0:
             print(f'Payload saved to {outfile}')
     elif args.language == 'vba':
