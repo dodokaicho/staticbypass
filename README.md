@@ -109,6 +109,7 @@ pip install -r requirements.txt
 |:---------------:|:--:|:--:|:----------:|:---:|:----:|:-----------:|
 | shellcoderunner | ✅ | ✅ | ✅ | ✅ | ✅ | Simple shellcode runner using CreateThread |
 | processhollow   | ✅ | ✅ | ✅ | ✅ | ✅ | Process hollowing template targeting svchost.exe |
+| service         | ✅ | ❌ | ❌ | ❌ | ❌ | Template for running executable as service |
 | processinject   | ✅ | ❌ | ❌ | ❌ | ❌ | Search for explorer.exe and create a remote thread |
 | delayedhollow   | ✅ | ❌ | ❌ | ❌ | ❌ | Process hollowing with delay |
 | hellsgate       | ✅ | ❌ | ❌ | ❌ | ❌ | Dynamic API resolution using HellsGate technique |
