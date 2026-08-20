@@ -6,7 +6,7 @@ from Crypto.Util import number
 from Crypto.Hash import SHA256
 from base64 import standard_b64encode
 import string
-from utils.utils import str_to_cs
+from cs.utils.formatters import str_to_cs
 
 
 class RSAEncrypt:

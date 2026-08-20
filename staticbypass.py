@@ -18,6 +18,16 @@ def load_module(language, category, item):
     spec.loader.exec_module(module)
     return getattr(module, item)
 
+def parse_module_args(argument_string):
+    split = str(argument_string).split(',')
+    item = split[0]
+    arguments = {}
+    if (len(split) != 1):
+        for item in split[1:]:
+            splitItems = item.split('=')
+            arguments[splitItems[0]] = splitItems[1]
+    return item, arguments
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-e', "--transformers", type=str, nargs='*', required=False, help='Transformers encrypt or encode the shellcode and is decrypted or decoded at runtime.')
@@ -58,13 +68,7 @@ def main():
 
     if args.transformers:
         for transformer in args.transformers:
-            split = str(transformer).split(',')
-            transformersItem = split[0]
-            arguments = {}
-            if (len(split) != 1):
-                for item in split[1:]:
-                    splitItems = item.split('=')
-                    arguments[splitItems[0]] = splitItems[1]
+            transformersItem, arguments = parse_module_args(transformer)
             transformersObject = load_module(args.language, 'transformers', transformersItem)(arguments)
             transformedShellcode = transformersObject.encode(shellcode)
             codeblocks += transformersObject.codeblock()
@@ -75,13 +79,7 @@ def main():
 
     # Obfuscate shellcode
     if args.obfuscator:
-        split = str(args.obfuscator).split(',')
-        obfuscator = split[0]
-        arguments = {}
-        if (len(split) != 1):
-            for item in split[1:]:
-                splitItems = item.split('=')
-                arguments[splitItems[0]] = splitItems[1]
+        obfuscator, arguments = parse_module_args(args.obfuscator)
         obfuscatorObject = load_module(args.language, 'obfuscators', obfuscator)(arguments)
         obfuscatedShellcode = obfuscatorObject.obfuscate(shellcode)
         codeblocks += obfuscatorObject.codeblock()
@@ -97,13 +95,7 @@ def main():
     imports = templateObject.imports() + imports
 
 
-    split = str(args.delivery).split(',')
-    deliveryItem = split[0]
-    arguments = {}
-    if (len(split) != 1):
-        for item in split[1:]:
-            splitItems = item.split('=')
-            arguments[splitItems[0]] = splitItems[1]
+    deliveryItem, arguments = parse_module_args(args.delivery)
     deliveryObject = load_module(args.language, 'delivery', deliveryItem)(shellcode, arguments)
     codeblocks += deliveryObject.codeblock()
     transformers = deliveryObject.transformer(transformers)
@@ -180,12 +172,8 @@ edition = "2021"
     if args.postprocessors:
         postprocessorsList = args.postprocessors.split(',')
         for postprocessorItem in postprocessorsList:
-            postprocessorSpec = importlib.util.spec_from_file_location(postprocessorItem, f'{args.language}/postprocessors/{postprocessorItem}.py')
-            postprocessorModule = importlib.util.module_from_spec(postprocessorSpec)
-            sys.modules[postprocessorSpec.name] = postprocessorModule 
-            postprocessorSpec.loader.exec_module(postprocessorModule)
-            prprocessorObject = getattr(postprocessorModule, postprocessorItem)()
-            postprocessorFunction = getattr(prprocessorObject, 'apply')
+            postprocessorObject = load_module(args.language, 'postprocessors', postprocessorItem)()
+            postprocessorFunction = getattr(postprocessorObject, 'apply')
             postprocessorFunction(outfile)
 
 if __name__ == "__main__":

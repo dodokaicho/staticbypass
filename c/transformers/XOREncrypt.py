@@ -1,6 +1,6 @@
 import random
 import string
-from utils.utils import bytes_to_c
+from c.utils.formatters import bytes_to_c
 import os
 
 class XOREncrypt:

@@ -2,7 +2,7 @@ import os
 from Crypto.Cipher import ARC4
 import string
 import random
-from utils.utils import bytes_to_cs
+from cs.utils.formatters import bytes_to_cs
 
 class RC4Encrypt:
 

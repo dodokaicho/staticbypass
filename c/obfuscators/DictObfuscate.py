@@ -1,6 +1,6 @@
 import random
 import string
-from utils.utils import list_to_c
+from c.utils.formatters import *
 import time
 
 class DictObfuscate:

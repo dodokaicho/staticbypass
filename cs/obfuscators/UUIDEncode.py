@@ -1,9 +1,6 @@
 import random
 import string
-import utils
-import os
 from uuid import UUID
-from itertools import cycle
 
 class UUIDEncode:
 

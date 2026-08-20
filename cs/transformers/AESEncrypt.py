@@ -1,4 +1,4 @@
-from utils.utils import bytes_to_cs
+from cs.utils.formatters import bytes_to_cs
 import os
 from Crypto.Cipher import AES
 from Crypto.Util import Padding

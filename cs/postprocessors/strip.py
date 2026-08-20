@@ -1,6 +1,4 @@
-import tempfile
 import subprocess
-import os
 import platform
 
 class strip:

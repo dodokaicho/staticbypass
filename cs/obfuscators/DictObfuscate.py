@@ -1,6 +1,5 @@
 import random
 import string
-from utils.utils import list_to_c
 import json
 import time
 
