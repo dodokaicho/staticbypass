@@ -86,7 +86,7 @@ pip install -r requirements.txt
 
 | Transformer   | C  | C# | PowerShell | VBA | Rust | Description |
 |:-------------:|:--:|:--:|:----------:|:---:|:----:|:-----------:|
-| AESEncrypt    | ✅ | ✅ | ✅ | ❌ | ✅ | AES Encryption |
+| AESEncrypt    | ✅ | ✅ | ✅ | ✅ | ✅ | AES Encryption |
 | TinyAES       | ✅ | ❌ | ❌ | ❌ | ❌ | AES Encryption without libraries |
 | XOREncrypt    | ✅ | ✅ | ✅ | ✅ | ✅ | XOR Encryption |
 | RC4Encrypt    | ✅ | ✅ | ✅ | ✅ | ✅ | RC4 Encryption |
@@ -187,7 +187,7 @@ class Base64Encode:
 """.format(name = self.name)
 
     # Perform the obfuscation of the code
-    def obfuscate(self, decoded):
+    def obfuscate(self, decoded: bytes) -> str:
         return base64.b64encode(decoded).decode()
 
     # Write the function call into the source code file
@@ -247,6 +247,4 @@ class strip:
     def apply(self, outfile: str) -> None:
         if platform.system() == 'Linux':
             result = subprocess.run(['strip', '--strip-all', f'{outfile}'])
-        if result.returncode == 0:
-            return 1
 ```
