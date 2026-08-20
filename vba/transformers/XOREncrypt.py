@@ -13,10 +13,10 @@ class XOREncrypt:
         else:
             self.key = os.urandom(16)
 
-    def compilerOptions(self) -> list[str]:
+    def imports(self) -> list[str]:
         return []
 
-    def imports(self) -> list[str]:
+    def compilerOptions(self) -> list[str]:
         return []
 
     def encode(self, plaintext: bytes) -> bytes:

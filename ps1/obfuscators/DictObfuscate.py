@@ -26,15 +26,15 @@ class DictObfuscate:
     def compilerOptions(self) -> list[str]:
         return []
 
-    def transformer(self, shellcodestring: str) -> str:
-        return shellcodestring.format(shellcode=f'{{shellcode}} | {self.name}')
-
     def obfuscate(self, decoded: bytes) -> str:
         encoded = ''
         for i in range(0, len(decoded) - 1):
             encoded += self.dictencode[decoded[i]] + ' '
         encoded += self.dictencode[decoded[-1]]
         return encoded
+
+    def transformer(self, shellcodestring: str) -> str:
+        return shellcodestring.format(shellcode=f'{{shellcode}} | {self.name}')
 
     def codeblock(self) -> str:
         return f"""

@@ -12,14 +12,14 @@ class EmojiEncode:
     def compilerOptions(self) -> list[str]:
         return []
 
-    def transformer(self, shellcodestring: str) -> str:
-        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
-
     def obfuscate(self, decoded: bytes) -> str:
         encoded = ""
         for i in range(0, len(decoded)):
             encoded += chr(0x1f400 + decoded[i])
         return encoded
+
+    def transformer(self, shellcodestring: str) -> str:
+        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
 
     def codeblock(self) -> str:
         return f"""
@@ -42,7 +42,6 @@ function {self.name} {{
             $bytes[$i] = ($1 -bor $2 -bor $3 -bor $4) -band 255
         }}
         return $bytes
-        
     }}
 }}
 """

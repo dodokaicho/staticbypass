@@ -15,9 +15,6 @@ class UUIDEncode:
     def compilerOptions(self) -> list[str]:
         return ['-lrpcrt4']
 
-    def transformer(self, shellcodestring: str) -> str:
-        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
-
     def obfuscate(self, decoded: bytes) -> list[str]:
         encoded = []
         self.size = 0
@@ -28,6 +25,9 @@ class UUIDEncode:
             encoded.append(str(UUID(bytes_le = chunk)))
             self.size += 1
         return encoded
+
+    def transformer(self, shellcodestring: str) -> str:
+        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
 
     def codeblock(self) -> str:
         return f"""
