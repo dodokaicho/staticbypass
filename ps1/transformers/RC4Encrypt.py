@@ -1,7 +1,7 @@
 import os
 from Crypto.Cipher import ARC4
 import string
-from utils.utils import bytes_to_ps1
+from ps1.utils.formatters import bytes_to_ps1
 import random
 
 class RC4Encrypt:

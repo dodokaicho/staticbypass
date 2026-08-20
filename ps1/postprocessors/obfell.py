@@ -1,7 +1,6 @@
 import string
 import random
 import os
-import argparse
 
 class obfell:
     def __init__(self, amount_of_arrays = 32, array_name_length = 32, number_of_operations = 1):
