@@ -1,16 +1,12 @@
-
-
-
-
 class shellcoderunner:
 
-    def imports(self):
+    def imports(self) -> list[str]:
         return []
 
-    def compilerOptions(self):
+    def compilerOptions(self) -> list[str]:
         return []
 
-    def template(self):
+    def template(self) -> str:
         return """
 # Define the Win32 API signatures using .NET reflection
 

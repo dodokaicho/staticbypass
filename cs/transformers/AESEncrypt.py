@@ -7,7 +7,7 @@ import random
 
 class AESEncrypt:
 
-    def __init__(self, arguments):
+    def __init__(self, arguments: dict) -> None:
         self.name = ''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(16))
         if 'key' in arguments:
             self.key = arguments['key'].encode()
@@ -18,20 +18,23 @@ class AESEncrypt:
         else:
             self.iv = os.urandom(16)
 
-    def compilerOptions(self):
+    def imports(self) -> list[str]:
+        return ["using System.Security.Cryptography;"]
+
+    def compilerOptions(self) -> list[str]:
         return []
 
-    def encode(self, plaintext):
+    def encode(self, plaintext: bytes) -> bytes:
         cipher = AES.new(self.key, AES.MODE_CBC, self.iv)
         self.plaintextSize = len(plaintext)
         encrypted = cipher.encrypt(Padding.pad(plaintext, 16, style='pkcs7'))
         self.ciphertextSize = len(encrypted)
         return encrypted
 
-    def imports(self):
-        return ["using System.Security.Cryptography;"]
+    def transformer(self, shellcodestring: str) -> str:
+        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
 
-    def codeblock(self):
+    def codeblock(self) -> str:
         return f"""
         public static byte[] {self.name}(byte[] ciphertext)
         {{
@@ -54,6 +57,3 @@ class AESEncrypt:
             return plaintext;
         }}
 """
-
-    def transformer(self, shellcodestring):
-        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')

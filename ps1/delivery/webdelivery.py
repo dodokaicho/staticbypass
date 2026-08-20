@@ -5,7 +5,7 @@ from ps1.utils.formatters import *
 
 class webdelivery:
 
-    def __init__(self, shellcode, arguments):
+    def __init__(self, shellcode: str | bytes | list[str], arguments: dict) -> None:
         self.name = ''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(16))
         if 'outfile' in arguments:
             outfile = arguments['outfile']
@@ -27,11 +27,16 @@ class webdelivery:
             exit(0)
 
 
-    def imports(self):
+    def imports(self) -> list[str]:
         return []
 
-    def codeblock(self):
+    def compilerOptions(self) -> list[str]:
+        return []
 
+    def transformer(self, shellcodestring: str) -> str:
+        return shellcodestring.format(shellcode=f'{self.name}')
+
+    def codeblock(self) -> str:
         if self.type == 'bytes':
             return f"""
 function {self.name} {{
@@ -53,10 +58,3 @@ function {self.name} {{
     return $obfuscated;
 }}
 """
-
-
-    def compilerOptions(self):
-        return []
-
-    def transformer(self, shellcodestring):
-        return shellcodestring.format(shellcode=f'{self.name}')

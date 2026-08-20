@@ -1,13 +1,7 @@
 import argparse
 import importlib
 import importlib.util
-import platform
 import sys
-import os
-import shutil
-import subprocess
-import codecs
-from vba.utils.inject import create_word_doc
 
 def load_module(language: str, category: str, item: str) -> type:
     spec = importlib.util.spec_from_file_location(item, f'{language}/{category}/{item}.py')

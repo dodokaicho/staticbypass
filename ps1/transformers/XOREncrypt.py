@@ -5,22 +5,29 @@ import os
 
 class XOREncrypt:
 
-    def __init__(self, arguments):
+    def __init__(self, arguments: dict) -> None:
         if 'key' in arguments:
             self.key = arguments['key'].encode()
         else:
             self.key = os.urandom(16)
         self.name = ''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(16))
 
-    def compilerOptions(self):
+    def compilerOptions(self) -> list[str]:
         return []
 
-    def imports(self):
+    def imports(self) -> list[str]:
         return []
 
-    def codeblock(self):
-        return """
-function {name} {{
+    def encode(self, plaintext: bytes) -> bytes:
+        self.ciphertextSize = len(plaintext)
+        return bytes(plaintext[i] ^ self.key[i % len(self.key)] for i in range(0, len(plaintext)))
+
+    def transformer(self, shellcodestring: str) -> str:
+        return shellcodestring.format(shellcode=f'{{shellcode}} | {self.name}')
+
+    def codeblock(self) -> str:
+        return f"""
+function {self.name} {{
     [CmdletBinding()]
     [OutputType([byte[]])]
     param(
@@ -34,7 +41,7 @@ function {name} {{
         $buffer.AddRange($CipherBytes)
     }}
     end {{
-        {key}
+        {bytes_to_ps1(self.key, 'Key')}
         $cipher = $buffer.ToArray()
         $output = [byte[]]::new($cipher.Length)
         for ($i = 0; $i -lt $cipher.Length; $i++) {{
@@ -43,11 +50,4 @@ function {name} {{
         return $output
     }}
 }}
-""".format(name = self.name, key=bytes_to_ps1(self.key, 'Key'))
-
-    def encode(self, plaintext):
-        self.ciphertextSize = len(plaintext)
-        return bytes(plaintext[i] ^ self.key[i % len(self.key)] for i in range(0, len(plaintext)))
-
-    def transformer(self, shellcodestring):
-        return shellcodestring.format(shellcode=f'{{shellcode}} | {self.name}')
+"""

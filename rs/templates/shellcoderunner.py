@@ -1,6 +1,6 @@
 class shellcoderunner:
 
-    def imports(self):
+    def imports(self) -> list[str]:
         return ['extern crate windows_sys;', 
                 'use windows_sys::Win32::System::Memory::VirtualAlloc;', 
                 'use windows_sys::Win32::System::Threading::CreateThread;', 
@@ -9,10 +9,10 @@ class shellcoderunner:
                 'use std::ptr;'
         ]
 
-    def compilerOptions(self):
+    def compilerOptions(self) -> list[str]:
         return ['windows-sys = { version = "0.61.2", features = ["Win32_System_Memory", "Win32_System_Threading", "Win32_Security", "Win32_Foundation"] }']
 
-    def template(self):
+    def template(self) -> str:
         return """
 {imports}
 

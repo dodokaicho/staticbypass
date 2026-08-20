@@ -11,21 +11,37 @@ from cs.utils.formatters import str_to_cs
 
 class RSAEncrypt:
 
-    def __init__(self, arguments):
+    def __init__(self, arguments: dict) -> None:
         self.key = RSA.generate(2048)
         self.name = ''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(16))
         self.private_key = self.privKeyXML(self.key.export_key(format='DER', pkcs=1))
 
-    def imports(self):
+    def imports(self) -> list[str]:
         return ["using System.Security.Cryptography;"]
 
-    def codeblock(self):
-        return """
-        public static byte[] {name}(byte[] ciphertext)
-        {{
-            {key}
+    def compilerOptions(self) -> list[str]:
+        return []
 
-            byte [] plaintext = new byte[{plaintextLength}];
+    def encode(self, plaintext: bytes) -> bytes:
+        cipher = PKCS1_OAEP.new(self.key.public_key())
+        self.plaintextLength = len(plaintext)
+        ciphertext = b''
+        count = 0
+        for i in range(0, len(plaintext), 190):
+            ciphertext += cipher.encrypt(plaintext[i:i+190])
+            count += 1
+        return ciphertext
+
+    def transformer(self, shellcodestring: str) -> str:
+        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
+
+    def codeblock(self) -> str:
+        return f"""
+        public static byte[] {self.name}(byte[] ciphertext)
+        {{
+            {str_to_cs(self.private_key, 'key')}
+
+            byte [] plaintext = new byte[{self.plaintextLength}];
             RSA rsa = RSA.Create();
 
             rsa.FromXmlString(key);
@@ -38,23 +54,7 @@ class RSAEncrypt:
 
             return plaintext;
         }}
-""".format(name = self.name, key=str_to_cs(self.private_key, 'key'), plaintextLength=self.plaintextLength)
-
-    def compilerOptions(self):
-        return []
-
-    def encode(self, plaintext):
-        cipher = PKCS1_OAEP.new(self.key.public_key())
-        self.plaintextLength = len(plaintext)
-        ciphertext = b''
-        count = 0
-        for i in range(0, len(plaintext), 190):
-            ciphertext += cipher.encrypt(plaintext[i:i+190])
-            count += 1
-        return ciphertext
-
-    def transformer(self, shellcodestring):
-        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
+"""
     
     def privKeyXML(self, pem):
         keyDer = DerSequence()

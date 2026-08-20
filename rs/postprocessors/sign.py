@@ -10,11 +10,9 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
 
-
 class sign:
 
-    def apply(self, outfile):
-
+    def apply(self, outfile: str) -> None:
 
         # 1. Generate RSA Private Key
         private_key = rsa.generate_private_key(
@@ -69,11 +67,8 @@ class sign:
         with os.fdopen(certtf, "wb") as f:
             f.write(certificate.public_bytes(serialization.Encoding.PEM))
 
-
         if platform.system() == 'Linux':
             result = subprocess.run(['osslsigncode', 'sign', '-certs', certfilename, '-key', keyfilename, '-in', outfile, '-out', f'{tempfile.gettempdir()}/{outfile}' ])
             shutil.move(f'{tempfile.gettempdir()}/{outfile}', outfile)
             os.unlink(keyfilename)
             os.unlink(certfilename)
-        if result.returncode == 0:
-            return 1

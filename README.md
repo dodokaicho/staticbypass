@@ -168,16 +168,16 @@ class Base64Encode:
 
     # Return any imports your code uses
     # Imports are deduplicated (and order is retained)
-    def imports(self):
+    def imports(self) -> list[str]:
         return ["using System.Text;"]
     
     # Return any options required by the compiler
     # For example, libraries that need to be linked
-    def compilerOptions(self):
+    def compilerOptions(self) -> list[str]:
         return []
 
     # Return the code that deobfuscates the code in the target language
-    def codeblock(self):
+    def codeblock(self) -> str:
         return """
 
         public static byte[] {name}(string encoded)
@@ -191,7 +191,7 @@ class Base64Encode:
         return base64.b64encode(decoded).decode()
 
     # Write the function call into the source code file
-    def transformer(self, shellcodestring):
+    def transformer(self, shellcodestring: str) -> str:
         return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
 ```
 
@@ -201,15 +201,15 @@ Template objects include functions that return imports, any compiler options req
 class shellcoderunner:
 
     # Return any imports required
-    def imports(self):
+    def imports(self) -> list[str]:
         return ["#include <windows.h>", "#include <stdio.h>", "#include <stdlib.h>"]
 
     # Return any compiler options neede
-    def compilerOptions(self):
+    def compilerOptions(self) -> list[str]:
         return []
 
     # Return the template block with the placeholders for each item
-    def template(self):
+    def template(self) -> str:
         return """
 {imports}
 
@@ -244,7 +244,7 @@ import platform
 
 class strip:
 
-    def apply(self, outfile):
+    def apply(self, outfile: str) -> None:
         if platform.system() == 'Linux':
             result = subprocess.run(['strip', '--strip-all', f'{outfile}'])
         if result.returncode == 0:

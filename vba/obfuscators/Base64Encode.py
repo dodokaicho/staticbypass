@@ -5,18 +5,24 @@ import string
 
 class Base64Encode:
 
-    def __init__(self, arguments):
+    def __init__(self, arguments: dict) -> None:
         self.name = ''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(16))
 
-    def imports(self):
+    def imports(self) -> list[str]:
         return []
     
-    def compilerOptions(self):
+    def compilerOptions(self) -> list[str]:
         return []
 
-    def codeblock(self):
-        return """
-Private Function {name}(strData)
+    def obfuscate(self, decoded: bytes) -> str:
+        return base64.b64encode(decoded).decode()
+
+    def transformer(self, shellcodestring: str) -> str:
+        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
+
+    def codeblock(self) -> str:
+        return f"""
+Private Function {self.name}(strData)
     Dim i, inCount, outCount, firstTime
     Dim inArray(0 To 3) As Integer
     Dim outArray() As Byte
@@ -60,14 +66,6 @@ Private Function {name}(strData)
         strData = Mid(strData, 5)
     Wend
 
-    {name} = outArray
+    {self.name} = outArray
 End Function
-""".format(name = self.name)
-
-    def obfuscate(self, decoded):
-        return base64.b64encode(decoded).decode()
-
-    def transformer(self, shellcodestring):
-        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
-
-            
+"""            

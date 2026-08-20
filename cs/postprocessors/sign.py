@@ -10,11 +10,9 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
 
-
 class sign:
 
-    def apply(self, outfile):
-
+    def apply(self, outfile: str) -> None:
 
         # 1. Generate RSA Private Key
         private_key = rsa.generate_private_key(
@@ -75,5 +73,3 @@ class sign:
             shutil.move(f'{tempfile.gettempdir()}/{outfile}', outfile)
             os.unlink(keyfilename)
             os.unlink(certfilename)
-        if result.returncode == 0:
-            return 1
