@@ -10,22 +10,22 @@ import subprocess
 import codecs
 from vba.utils.inject import create_word_doc
 
-def load_module(language, category, item):
+def load_module(language: str, category: str, item: str) -> type:
     spec = importlib.util.spec_from_file_location(item, f'{language}/{category}/{item}.py')
     module = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = module
     spec.loader.exec_module(module)
     return getattr(module, item)
 
-def parse_module_args(argument_string):
+def parse_module_args(argument_string: str) -> tuple[str, dict]:
     split = str(argument_string).split(',')
-    item = split[0]
+    module = split[0]
     arguments = {}
     if (len(split) != 1):
         for item in split[1:]:
             splitItems = item.split('=')
             arguments[splitItems[0]] = splitItems[1]
-    return item, arguments
+    return module, arguments
 
 def main():
     parser = argparse.ArgumentParser()
@@ -95,6 +95,7 @@ def main():
 
 
     deliveryItem, arguments = parse_module_args(args.delivery)
+    print(parse_module_args(args.delivery))
     deliveryObject = load_module(args.language, 'delivery', deliveryItem)(shellcode, arguments)
     codeblocks += deliveryObject.codeblock()
     transformers = deliveryObject.transformer(transformers)
