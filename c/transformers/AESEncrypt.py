@@ -7,7 +7,7 @@ import random
 
 class AESEncrypt:
 
-    def __init__(self, arguments):
+    def __init__(self, arguments: dict) -> None:
         self.name = ''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(16))
         if 'key' in arguments:
             self.key = arguments['key'].encode()
@@ -18,25 +18,26 @@ class AESEncrypt:
         else:
             self.iv = os.urandom(16)
 
-    def imports(self):
-        return ["#include <bcrypt.h>", "#include <string.h>", "#pragma comment(lib, \"bcrypt.lib\")"]
+    def imports(self) -> list[str]:
+        return ["#include <bcrypt.h>", 
+                "#include <string.h>", 
+                "#pragma comment(lib, \"bcrypt.lib\")"]
 
-    def compilerOptions(self):
+    def compilerOptions(self) -> list[str]:
         return ['-lbcrypt']
 
-    def transformer(self, shellcodestring):
-        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
-
-    def encode(self, plaintext):
+    def encode(self, plaintext: bytes) -> bytes:
         cipher = AES.new(self.key, AES.MODE_CBC, self.iv)
         self.plaintextSize = len(plaintext)
         encrypted = cipher.encrypt(Padding.pad(plaintext, 16, style='pkcs7'))
         self.ciphertextSize = len(encrypted)
         return encrypted
 
-    def codeblock(self):
-        return f"""
+    def transformer(self, shellcodestring: str) -> str:
+        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
 
+    def codeblock(self) -> str:
+        return f"""
 unsigned char *{self.name}(const unsigned char *ciphertext)
 {{
 

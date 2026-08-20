@@ -4,7 +4,7 @@ import subprocess
 
 class hellsgate:
 
-    def __init__(self):
+    def __init__(self) -> None:
         fd, file_path = tempfile.mkstemp()
         self.outfd, self.outfile_path = tempfile.mkstemp()
         with os.fdopen(fd, 'w') as f:
@@ -35,13 +35,20 @@ HellDescent:
         result = subprocess.run(['x86_64-w64-mingw32-as', file_path, '-o', self.outfile_path])
         os.unlink(file_path)
 
-    def imports(self):
-        return ["#include <windows.h>", "#include <stdio.h>", "#include <stdlib.h>"]
+    def imports(self) -> list[str]:
+        return ["#include <windows.h>", \
+                "#include <stdio.h>", 
+                "#include <stdlib.h>"]
 
-    def compilerOptions(self):
-        return [self.outfile_path, '-municode', '-w', '-s', '-Os', '-IInclude']
+    def compilerOptions(self) -> list[str]:
+        return [self.outfile_path, 
+                '-municode', 
+                '-w', 
+                '-s', 
+                '-Os', 
+                '-IInclude']
 
-    def template(self):
+    def template(self) -> str:
         return """
 
 {imports}

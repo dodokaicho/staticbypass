@@ -5,36 +5,36 @@ import os
 
 class XOREncrypt:
 
-    def __init__(self, arguments):
+    def __init__(self, arguments: dict) -> None:
         if 'key' in arguments:
             self.key = arguments['key'].encode()
         else:
             self.key = os.urandom(16)
         self.name = ''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(16))
 
-    def imports(self):
+    def imports(self) -> list[str]:
         return []
     
-    def compilerOptions(self):
+    def compilerOptions(self) -> list[str]:
         return []
 
-    def codeblock(self):
-        return """
-unsigned char * {name}(const unsigned char * ciphertext)
+    def encode(self, plaintext: bytes) -> bytes:
+        self.ciphertextSize = len(plaintext)
+        return bytes(plaintext[i] ^ self.key[i % len(self.key)] for i in range(0, len(plaintext)))
+
+    def transformer(self, shellcodestring: str) -> str:
+        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
+
+    def codeblock(self) -> str:
+        return f"""
+unsigned char * {self.name}(const unsigned char * ciphertext)
 {{
-    {key}
-    int length = {ciphertextSize};
+    {bytes_to_c(self.key, 'key')}
+    int length = {self.ciphertextSize};
     unsigned char* plaintext = malloc(length);
     for (int i=0; i<length; i++){{
         plaintext[i] = ciphertext[i] ^ key[i % sizeof(key)];
     }}
     return plaintext;
 }}
-""".format(name = self.name, key=bytes_to_c(self.key, 'key'), ciphertextSize = self.ciphertextSize)
-
-    def transformer(self, shellcodestring):
-        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
-
-    def encode(self, plaintext):
-        self.ciphertextSize = len(plaintext)
-        return bytes(plaintext[i] ^ self.key[i % len(self.key)] for i in range(0, len(plaintext)))
+"""

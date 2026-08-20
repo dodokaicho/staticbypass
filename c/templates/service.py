@@ -1,12 +1,14 @@
 class service:
 
-    def imports(self):
-        return ["#include <windows.h>", "#include <stdio.h>"]
+    def imports(self) -> list[str]:
+        return ["#include <windows.h>", 
+                "#include <stdio.h>"]
 
-    def compilerOptions(self):
-        return ['-municode', '-mwindows']
+    def compilerOptions(self) -> list[str]:
+        return ['-municode', 
+                '-mwindows']
 
-    def template(self):
+    def template(self) -> str:
         return """
 {imports}
 

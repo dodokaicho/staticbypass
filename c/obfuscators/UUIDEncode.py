@@ -4,20 +4,36 @@ from uuid import UUID
 
 class UUIDEncode:
 
-    def __init__(self, arguments):
+    def __init__(self, arguments: dict) -> None:
         self.name = ''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(16))
 
-    def imports(self):
-        return ['#include <rpcdce.h>', '#pragma comment (lib, "Rpcrt4.lib")', "#include <rpc.h>"]
+    def imports(self) -> list[str]:
+        return ['#include <rpcdce.h>', 
+                '#pragma comment (lib, "Rpcrt4.lib")', 
+                "#include <rpc.h>"]
 
-    def compilerOptions(self):
+    def compilerOptions(self) -> list[str]:
         return ['-lrpcrt4']
 
-    def codeblock(self):
-        return """
-unsigned char * {name}(const unsigned char *uuids[])
+    def transformer(self, shellcodestring: str) -> str:
+        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
+
+    def obfuscate(self, decoded: bytes) -> list[str]:
+        encoded = []
+        self.size = 0
+        for i in range(0, len(decoded), 16):
+            chunk = decoded[i:i+16]
+            if len(chunk) < 16:
+                chunk = chunk + (b"\x90" * (16 - len(chunk)))
+            encoded.append(str(UUID(bytes_le = chunk)))
+            self.size += 1
+        return encoded
+
+    def codeblock(self) -> str:
+        return f"""
+unsigned char * {self.name}(const unsigned char *uuids[])
 {{
-    int size = {size};
+    int size = {self.size};
     UUID binaryUUID;
     unsigned char* out = malloc(size*16);
     for (int i=0; i<size; i++){{
@@ -40,18 +56,4 @@ unsigned char * {name}(const unsigned char *uuids[])
 
     return out;
 }}
-""".format(name = self.name, size = self.size)
-
-    def transformer(self, shellcodestring):
-        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
-
-    def obfuscate(self, decoded):
-        encoded = []
-        self.size = 0
-        for i in range(0, len(decoded), 16):
-            chunk = decoded[i:i+16]
-            if len(chunk) < 16:
-                chunk = chunk + (b"\x90" * (16 - len(chunk)))
-            encoded.append(str(UUID(bytes_le = chunk)))
-            self.size += 1
-        return encoded
+"""

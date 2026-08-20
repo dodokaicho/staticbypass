@@ -1,9 +1,9 @@
-def bytes_to_c(bytestring, name):
+def bytes_to_c(bytestring: bytes, name: str) -> str:
     return f'static const unsigned char {name}[] = ' + '{' + ','.join([f'{hex(val)}' for val in bytestring]) + '};'
 
-def str_to_c(string, name):
+def str_to_c(string: str, name: str) -> str:
     return f'static const unsigned char {name}[] = "{string}\\0";'
 
-def list_to_c(itemList, name):
+def list_to_c(itemList: list[str], name: str) -> str:
     encodedString = ",".join([f'"{x}"' for x in itemList])
     return f'static const unsigned char *{name}[] = {{{encodedString}}};'

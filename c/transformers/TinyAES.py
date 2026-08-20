@@ -7,19 +7,29 @@ import random
 
 class TinyAES:
 
-    def __init__(self, arguments):
+    def __init__(self, arguments: dict) -> None:
         self.name = ''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(16))
         self.key = os.urandom(32)
         self.iv = os.urandom(16)
 
-    def imports(self):
+    def imports(self) -> list[str]:
         return ["#include <stdint.h>"]
 
-    def compilerOptions(self):
+    def compilerOptions(self) -> list[str]:
         return []
 
-    def codeblock(self):
-        return """
+    def encode(self, plaintext: bytes) -> bytes:
+        cipher = AES.new(self.key, AES.MODE_CBC, self.iv)
+        self.plaintextSize = len(plaintext)
+        encrypted = cipher.encrypt(Padding.pad(plaintext, 16, style='pkcs7'))
+        self.ciphertextSize = len(encrypted)
+        return encrypted
+
+    def transformer(self, shellcodestring: str) -> str:
+        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
+    
+    def codeblock(self) -> str:
+        return f"""
 
 static const uint8_t inv_sbox[256] = {{
     0x52,0x09,0x6a,0xd5,0x30,0x36,0xa5,0x38,0xbf,0x40,0xa3,0x9e,0x81,0xf3,0xd7,0xfb,
@@ -184,24 +194,14 @@ unsigned char *aes256_cbc_decrypt(const unsigned char *in, size_t len,
     return out;
 }}
         
-unsigned char *{name}(const unsigned char *ciphertext)
+unsigned char *{self.name}(const unsigned char *ciphertext)
 {{
-    {key}
-    {iv}
+    {bytes_to_c(self.key, 'key')}
+    {bytes_to_c(self.iv, 'iv')}
 
-    int len = {ciphertextSize};
+    int len = {self.ciphertextSize};
 
     size_t out_len = 0;
     unsigned char* plaintext =  aes256_cbc_decrypt(ciphertext, len, key, iv, &out_len);
 }}
-""".format(name=self.name, key=bytes_to_c(self.key, 'key'), iv=bytes_to_c(self.iv, 'iv'), ciphertextSize = self.ciphertextSize)
-
-    def transformer(self, shellcodestring):
-        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
-
-    def encode(self, plaintext):
-        cipher = AES.new(self.key, AES.MODE_CBC, self.iv)
-        self.plaintextSize = len(plaintext)
-        encrypted = cipher.encrypt(Padding.pad(plaintext, 16, style='pkcs7'))
-        self.ciphertextSize = len(encrypted)
-        return encrypted
+"""

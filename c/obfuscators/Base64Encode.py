@@ -2,19 +2,28 @@ import base64
 import random
 import string
 
-
 class Base64Encode:
 
-    def __init__(self, arguments):
+    def __init__(self, arguments: dict) -> None:
         self.name = ''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(16))
 
-    def imports(self):
-        return ["#include <stdio.h>", "#include <wincrypt.h>", "#include <stdlib.h>"]
+    def imports(self) -> list[str]:
+        return ["#include <stdio.h>", 
+                "#include <wincrypt.h>", 
+                "#include <stdlib.h>"]
 
-    def codeblock(self):
-        return """
+    def compilerOptions(self) -> list[str]:
+        return ['-lcrypt32']
 
-unsigned char* {name}(const unsigned char* base64Str) {{
+    def obfuscate(self, decoded: bytes) -> str:
+        return base64.b64encode(decoded).decode()
+
+    def transformer(self, shellcodestring: str) -> str:
+        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
+
+    def codeblock(self) -> str:
+        return f"""
+unsigned char* {self.name}(const unsigned char* base64Str) {{
 
     // 1. Calculate the required buffer size
     DWORD binaryLen = 0;
@@ -39,15 +48,5 @@ unsigned char* {name}(const unsigned char* base64Str) {{
 
     return decodedData;
 }}
-
-""".format(name = self.name)
-
-    def compilerOptions(self):
-        return ['-lcrypt32']
-
-    def transformer(self, shellcodestring):
-        return shellcodestring.format(shellcode=f'{self.name}({{shellcode}})')
-
-    def obfuscate(self, decoded):
-        return base64.b64encode(decoded).decode()
+"""
             

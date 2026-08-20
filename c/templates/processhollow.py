@@ -1,12 +1,15 @@
 class processhollow:
 
-    def imports(self):
-        return ["#include <windows.h>", "#include <stdio.h>", "#include <stdlib.h>", "#include <winternl.h>"]
+    def imports(self) -> list[str]:
+        return ["#include <windows.h>", 
+                "#include <stdio.h>", 
+                "#include <stdlib.h>", 
+                "#include <winternl.h>"]
 
-    def compilerOptions(self):
+    def compilerOptions(self) -> list[str]:
         return []
 
-    def template(self):
+    def template(self) -> str:
         return """
 {imports}
 
