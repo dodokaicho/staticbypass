@@ -27,7 +27,7 @@ def parse_module_args(argument_string: str) -> tuple[str, dict]:
             arguments[splitItems[0]] = splitItems[1]
     return module, arguments
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument('-e', "--transformers", type=str, nargs='*', required=False, help='Transformers encrypt or encode the shellcode and is decrypted or decoded at runtime.')
     parser.add_argument('-s', "--shellcode", type=str, required=True, help='Specifies the raw binary shellcode file')
