@@ -3,7 +3,6 @@ import importlib
 import importlib.util
 import platform
 import sys
-import tempfile
 import os
 import shutil
 import subprocess
@@ -95,7 +94,6 @@ def main() -> None:
 
 
     deliveryItem, arguments = parse_module_args(args.delivery)
-    print(parse_module_args(args.delivery))
     deliveryObject = load_module(args.language, 'delivery', deliveryItem)(shellcode, arguments)
     codeblocks += deliveryObject.codeblock()
     transformers = deliveryObject.transformer(transformers)
@@ -105,69 +103,9 @@ def main() -> None:
     # Remove duplicates while retaining order
     imports = '\n'.join(list(dict.fromkeys(imports)))
 
-    # Write template to temporary file for compilation
-    print(f'Writing source code to {args.output}.{args.language}')
-
-    # Using emoji encode on a ps1 requires the utf-8 signature to be included in the file
-    if args.language == 'ps1' and args.obfuscator == 'EmojiEncode':
-        f = codecs.open(f'{args.output}.{args.language}', 'w', 'utf-8-sig')
-    else:
-        f = open(f'{args.output}.{args.language}', 'w')
-
     formattedCode = templateCode.format(imports=imports, shellcode='', codeblocks=codeblocks, transformers=transformers, shellcodeSize=shellcodeSize)
-    f.write(formattedCode)
-    f.close()
-    print(f'Source code saved to {args.output}.{args.language}')
-
-    # Compile file
-    if args.language == 'c':
-        outfile = f'{args.output}.exe'
-        temp = ['x86_64-w64-mingw32-gcc', f'{args.output}.{args.language}', '-o', outfile, '-Wall'] + compilerOptions
-        result = subprocess.run(['x86_64-w64-mingw32-gcc' , f'{args.output}.{args.language}', '-o', outfile, ] + compilerOptions, check=True)
-        if result.returncode == 0:
-            print(f'Payload saved to {outfile}')
-    elif args.language == 'cs':
-        if args.output.lower()[-4:] != '.exe':
-            outfile = args.output + '.exe'
-        else:
-            outfile = args.output
-        if platform.system() == 'Windows':
-            result = subprocess.run(['C:\\windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe', f'{args.output}.{args.language}', f'-out:{outfile}'] + compilerOptions, check=True)
-        elif platform.system() == 'Linux':
-            result = subprocess.run(['mcs', f'{args.output}.{args.language}', f'-out:{outfile}'] + compilerOptions, check=True)
-        if result.returncode == 0:
-            print(f'Payload saved to {outfile}')
-    elif args.language == 'vba':
-        outfile = f'{args.output}.docm'
-        result = create_word_doc(formattedCode, outfile)
-        print(f'Macro saved to {outfile}')
-    elif args.language == 'ps1':
-        outfile = f'{args.output}.ps1'
-    elif args.language == 'rs':
-        if args.output.lower()[-4:] != '.exe':
-            outfolder = args.output
-            outfile = args.output + '.exe'
-        else:
-            outfolder = args.output[0:-4]
-            outfile = args.output
-        #shutil.rmtree(f'{outfolder}', ignore_errors=True)
-        os.makedirs(f'{outfolder}/src/', exist_ok=True)
-        open(f'{outfolder}/src/main.rs', 'w').write(formattedCode)
-        open(f'{outfolder}/Cargo.toml', 'w').write(f"""
-[package]
-name = "{outfolder}"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-{'\n'.join(compilerOptions)}
-
-[profile.release]
-""")
-        result = subprocess.run(['cargo', 'build', '--release', '--target', 'x86_64-pc-windows-gnu'], cwd=outfolder, check=True)
-        shutil.copy(f'{outfolder}/target/x86_64-pc-windows-gnu/release/{outfile}', outfile)
-        if result.returncode == 0:
-            print(f'Payload saved to {outfile}')
+    compiler = importlib.import_module(f'{args.language}.utils.compiler')
+    outfile = compiler.compile(formattedCode, args.output, compilerOptions)
 
     if args.postprocessors:
         postprocessorsList = args.postprocessors.split(',')

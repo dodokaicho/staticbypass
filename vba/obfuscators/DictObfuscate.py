@@ -1,6 +1,5 @@
 import random
 import string
-from vba.utils.formatters import dict_to_ps1
 import time
 
 class DictObfuscate:
