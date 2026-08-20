@@ -1,5 +1,5 @@
 import os
-from utils.utils import bytes_to_rs
+from rs.utils.formatters import bytes_to_rs
 from Crypto.Cipher import AES
 from Crypto.Util import Padding
 import string

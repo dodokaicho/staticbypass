@@ -1,7 +1,6 @@
 import random
 import string
-import json
-from utils.utils import *
+from rs.utils.formatters import *
 
 class webdelivery:
 

@@ -1,6 +1,6 @@
 import os
 from Crypto.Cipher import ARC4
-from utils.utils import bytes_to_rs
+from rs.utils.formatters import bytes_to_rs
 import string
 import random
 

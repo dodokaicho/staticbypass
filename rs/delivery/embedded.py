@@ -1,6 +1,6 @@
 import random
 import string
-from utils.utils import *
+from rs.utils.formatters import *
 
 class embedded:
 
