@@ -18,7 +18,7 @@ import olefile
 from docx import Document as WordDocument
 from lxml import etree
 
-from utils.vbaproject import _vba_compress_verified
+from vba.utils.vbaproject import _vba_compress_verified
 
 # _VBA_PROJECT version — must be a known Office version, not 0x0000
 _VBA_PROJECT_VERSION = 0x00B5  # Office 2016

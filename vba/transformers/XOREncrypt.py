@@ -1,6 +1,6 @@
 import random
 import string
-from utils.utils import bytes_to_vba
+from vba.utils.formatters import bytes_to_vba
 import os
 from itertools import cycle
 

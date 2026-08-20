@@ -1,5 +1,3 @@
-import random
-
 def bytes_to_vba(bytestring, name):
     arrayString = f'\tDim {name}(0 To {len(bytestring) - 1}) As Byte\n'
 
@@ -31,8 +29,4 @@ def list_to_vba(itemList, name):
         else:
             returnString += f'"{substring}" & _\n'
 
-
     return returnString
-
-def generateFunctionName():
-    return random.choice(open('wordlists/verbs.txt', 'r').readlines()).strip() + random.choice(open('wordlists/nouns.txt', 'r').readlines()).strip()

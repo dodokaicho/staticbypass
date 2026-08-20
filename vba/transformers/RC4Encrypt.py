@@ -1,6 +1,6 @@
 import os
 from Crypto.Cipher import ARC4
-from utils.utils import bytes_to_vba
+from vba.utils.formatters import bytes_to_vba
 import string
 import random
 
