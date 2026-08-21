@@ -55,7 +55,9 @@ python3 staticbypass.py -s ~/shellcode.bin -e XOREncrypt,key=hellotherehellother
 ## Roadmap
 - Add obfuscator support for the different programming languages
 - Add more templates e.g. early bird apc injection, heap allocation
+- Add pascal support
 - Refactor code
+- Add arguments to templates and other categories
 
 ## Installation
 ### Install pre-reqs
@@ -65,7 +67,7 @@ sudo apt install mono-devel mingw-w64 wine osslsigncode
 
 ### Download project
 ```
-git clone https://github.com/dodokaicho/staticbypass.git
+git clone https://github.com/nanmonee/staticbypass.git
 python3 -m venv env
 source env/bin/activate
 pip install -r requirements.txt
@@ -77,7 +79,8 @@ pip install -r requirements.txt
 |:---------:|:--:|:--:|:----------:|:---:|:----:|:--:|:-----------:|
 | embedded      | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Shellcode is stored within the executable |
 | webdelivery   | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Download string or raw bytes from specified url |
-| regkey        | ❌ | ✅ | ✅ | ❌ | ❌ | ❌ | Download string or raw bytes from specified url |
+| regkey        | ❌ | ✅ | ✅ | ❌ | ❌ | ❌ | Retrieve shellcode from registry key |
+| embedtext     | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | Store shellcode string inside word document |
 
 | Pre-processor | C  | C# | PowerShell | VBA | Rust | Go | Description |
 |:-------------:|:--:|:--:|:----------:|:---:|:----:|:--:|:-----------:|

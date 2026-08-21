@@ -15,6 +15,6 @@ def compile(code: str, output: str, compilerOptions: list[str]) -> str:
             embedtext = open(value).read()
             print(f'Writing obfuscated shellcode to {outfile}')
             document = Document(outfile)
-            document.add_paragraph(embedtext)
+            document.paragraphs[0].add_run(embedtext)
             document.save(outfile)
     return outfile

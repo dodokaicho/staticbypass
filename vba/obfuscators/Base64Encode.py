@@ -30,10 +30,6 @@ Private Function {self.name}(strData)
     Dim haystack
     haystack = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 
-    If Len(strData) Mod 4 <> 0 Then
-        Err.Raise 514, "DecodeBase64", "Base64 string length is wrong length"
-    End If
-
     firstTime = True
     While Len(strData) > 0
 

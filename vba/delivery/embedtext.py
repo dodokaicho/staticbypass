@@ -32,7 +32,7 @@ class embedtext:
     def codeblock(self) -> str:
         return f"""
 Function {self.name}() As {self.type}
-    obfuscated = ActiveDocument.Paragraphs(2).Range.Text
-    {self.name} = obfuscated
+    obfuscated = ActiveDocument.Paragraphs(1).Range.Text
+    {self.name} = RTrim(obfuscated)
 End Function
 """
