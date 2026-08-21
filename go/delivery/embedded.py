@@ -8,7 +8,9 @@ class embedded:
         self.name = ''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(16))
         shellcodeType = type(shellcode).__name__
         if shellcodeType == "bytes":
-            self.type = f'[{len(shellcode)}]byte'
+            self.type = f'[]byte'
+        elif shellcodeType == "str":
+            self.type = f'string'
         self.shellcode = globals()[f'{type(shellcode).__name__}_to_go'](shellcode, 'obfuscated')
 
     def imports(self) -> list[str]:
