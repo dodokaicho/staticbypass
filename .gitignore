@@ -9,3 +9,6 @@ env/
 output.rs
 /output/
 output.txt
+go.mod
+go.sum
+output.go
