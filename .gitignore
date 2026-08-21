@@ -5,6 +5,7 @@ output.exe
 output.ps1
 output.vba
 output.docm
+output.go
 env/
 output.rs
 /output/

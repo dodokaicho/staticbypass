@@ -22,7 +22,6 @@ class Base64Encode:
 
     def codeblock(self) -> str:
         return f"""
-
         public static byte[] {self.name}(string encoded)
         {{
             return Convert.FromBase64String(encoded);

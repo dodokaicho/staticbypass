@@ -1,6 +1,6 @@
 import random
 import string
-import json
+from cs.utils.formatters import dict_to_cs
 import time
 
 class DictObfuscate:
@@ -12,13 +12,13 @@ class DictObfuscate:
         else:
             self.rng = random.Random(time.time())
         self.dictencode = {}
-        self.dictdecode = []
+        self.dictdecode = {}
         wordlist = open('wordlists/english.txt', 'r').readlines()
         randomNumbers = self.rng.sample(range(0, len(wordlist)), 256)
         for i in range(0, 256):
             word = wordlist[randomNumbers[i]].strip()
             self.dictencode[i] = word
-            self.dictdecode.append({word: i})
+            self.dictdecode[word] = i
 
     def imports(self) -> list[str]:
         return []
@@ -40,13 +40,12 @@ class DictObfuscate:
         return f"""
         public static byte[] {self.name}(string encoded)
         {{
-            var dictionary = new Dictionary<string, byte> {{ {json.dumps(self.dictdecode, separators=(',', ','))[1:-1]} }};
+            {dict_to_cs(self.dictdecode, 'dictionary')}
             string[] words = encoded.Split(new [] {{' '}});
             byte[] decoded = new byte[words.Length];
             for (int i=0; i<words.Length; i++){{
                 decoded[i] = (byte)dictionary[words[i]];
             }}
-
             return decoded;
         }}
 """
