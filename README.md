@@ -2,7 +2,7 @@
 
 ## Features
 - Takes in a raw shellcode file, applies encryptors and obfuscators, formats it, places it into a template, and compiles it
-- Supports C, C#, PowerShell, VBA, and Rust
+- Supports C, C#, PowerShell, VBA, Rust, and Go
 - Automates placing VBA code into a word document
 - Supports AES, XOR, and RC4 encryption, and Dictionary, UUID, IPv4, IPv6, and MAC address obfuscation
 - Designed to bypass static detection methods
@@ -90,7 +90,7 @@ pip install -r requirements.txt
 | XOREncrypt    | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | XOR Encryption |
 | RC4Encrypt    | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | RC4 Encryption |
 | RSAEncrypt    | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | RSA Encryption |
-| Rotate        | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | Rotate each byte by 4 bits |
+| Rotate        | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | Rotate each byte by n bits |
 | Shuffle       | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | Shuffle bytes reversibly |
 
 | Transformer   | C  | C# | PowerShell | VBA | Rust | Go | Description |
@@ -100,7 +100,7 @@ pip install -r requirements.txt
 | IPv4Obfuscate | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Convert bytes into IPv4 addresses |
 | IPv6Obfuscate | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Convert bytes into IPv6 addresses |
 | MACObfuscate  | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Convert bytes into MAC addresses |
-| UUIDEncode    | ✅ | ✅ | ✅ | ❌ | ✅ | ❌ | Convert bytes into UUIDv4 strings |
+| UUIDEncode    | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | Convert bytes into UUIDv4 strings |
 | EmojiEncode   | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | Convert bytes into emoji |
 | Brainfuck     | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | Convert bytes into a brainfuck string (slow) |
 | Whitespace    | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | Convert bytes into tabs and spaces |
@@ -108,7 +108,7 @@ pip install -r requirements.txt
 | Transformer   | C  | C# | PowerShell | VBA | Rust | Go | Description |
 |:-------------:|:--:|:--:|:----------:|:---:|:----:|:--:|:-----------:|
 | shellcoderunner | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Simple shellcode runner using CreateThread |
-| processhollow   | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Process hollowing template targeting svchost.exe |
+| processhollow   | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Process hollowing template targeting svchost.exe |
 | service         | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | Template for running executable as service |
 | processinject   | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | Search for explorer.exe and create a remote thread |
 | delayedhollow   | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | Process hollowing with delay |

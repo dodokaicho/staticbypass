@@ -61,7 +61,6 @@ int main()
         &pImage,
         sizeof(pImage),
         &NumberOfBytesRead) || NumberOfBytesRead != sizeof(pImage);
-
         
     ReadProcessMemory(
         pi.hProcess,
