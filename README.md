@@ -79,7 +79,7 @@ pip install -r requirements.txt
 | webdelivery   | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Download string or raw bytes from specified url |
 | regkey        | ❌ | ✅ | ✅ | ❌ | ❌ | ❌ | Download string or raw bytes from specified url |
 
-| Transformer   | C  | C# | PowerShell | VBA | Rust | Go | Description |
+| Pre-processor | C  | C# | PowerShell | VBA | Rust | Go | Description |
 |:-------------:|:--:|:--:|:----------:|:---:|:----:|:--:|:-----------:|
 | mkpivm64      | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Virtualize shellcode for obfuscation (requires template with RWX) by @D7EAD |
 
@@ -93,7 +93,7 @@ pip install -r requirements.txt
 | Rotate        | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | Rotate each byte by n bits |
 | Shuffle       | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | Shuffle bytes reversibly |
 
-| Transformer   | C  | C# | PowerShell | VBA | Rust | Go | Description |
+| Obfuscator    | C  | C# | PowerShell | VBA | Rust | Go | Description |
 |:-------------:|:--:|:--:|:----------:|:---:|:----:|:--:|:-----------:|
 | Base64Encode  | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Base64 Encode |
 | DictObfuscate | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Convert bytes into randomly picked dictionary words. Uses wordlists/english.txt |
@@ -105,7 +105,7 @@ pip install -r requirements.txt
 | Brainfuck     | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | Convert bytes into a brainfuck string (slow) |
 | Whitespace    | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | Convert bytes into tabs and spaces |
 
-| Transformer   | C  | C# | PowerShell | VBA | Rust | Go | Description |
+| Template      | C  | C# | PowerShell | VBA | Rust | Go | Description |
 |:-------------:|:--:|:--:|:----------:|:---:|:----:|:--:|:-----------:|
 | shellcoderunner | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Simple shellcode runner using CreateThread |
 | processhollow   | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Process hollowing template targeting svchost.exe |
