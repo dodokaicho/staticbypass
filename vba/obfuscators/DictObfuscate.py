@@ -20,7 +20,6 @@ class DictObfuscate:
             self.dictencode[i] = word
             self.dictdecode[word] = i
 
-
     def imports(self) -> list[str]:
         return []
 
@@ -29,6 +28,7 @@ class DictObfuscate:
 
     def obfuscate(self, decoded: bytes) -> str:
         encoded = ''
+        self.length = len(decoded)
         for i in range(0, len(decoded) - 1):
             encoded += self.dictencode[decoded[i]] + ' '
         encoded += self.dictencode[decoded[-1]]
@@ -41,17 +41,12 @@ class DictObfuscate:
         return f"""
 Private Function {self.name}(strData)
     {dict_to_vba(self.dictdecode, 'dictionary')}
-    Dim arrayLength as Long
-    Dim outArray() As Byte
+    Dim outArray({self.length}) As Byte
     
     Dim words() As String
 
     words = Split(strData, " ")
-    arrayLength = UBound(words) - LBound(words) + 1
-
-    Redim outArray(arrayLength)
-
-    For i=0 To arrayLength - 1
+    For i=0 To {self.length} - 1
         outArray(i) = dictionary.Item(words(i))
     Next i
 
