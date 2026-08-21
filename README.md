@@ -85,10 +85,10 @@ pip install -r requirements.txt
 
 | Transformer   | C  | C# | PowerShell | VBA | Rust | Go | Description |
 |:-------------:|:--:|:--:|:----------:|:---:|:----:|:--:|:-----------:|
-| AESEncrypt    | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | AES Encryption |
+| AESEncrypt    | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | AES Encryption |
 | TinyAES       | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | AES Encryption without libraries |
-| XOREncrypt    | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | XOR Encryption |
-| RC4Encrypt    | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | RC4 Encryption |
+| XOREncrypt    | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | XOR Encryption |
+| RC4Encrypt    | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | RC4 Encryption |
 | RSAEncrypt    | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | RSA Encryption |
 | Rotate        | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | Rotate each byte by 4 bits |
 | Shuffle       | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | Shuffle bytes reversibly |

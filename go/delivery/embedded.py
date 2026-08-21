@@ -28,6 +28,6 @@ class embedded:
         return f"""
 func {self.name}() {self.type} {{
     {self.shellcode}
-    return obfuscated;
+    return obfuscated
 }}
 """
