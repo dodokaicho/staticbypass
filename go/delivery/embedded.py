@@ -11,6 +11,8 @@ class embedded:
             self.type = f'[]byte'
         elif shellcodeType == "str":
             self.type = f'string'
+        elif shellcodeType == "list":
+            self.type = f'[]string'
         self.shellcode = globals()[f'{type(shellcode).__name__}_to_go'](shellcode, 'obfuscated')
 
     def imports(self) -> list[str]:
