@@ -1,9 +1,7 @@
 class shellcoderunner:
 
     def imports(self) -> list[str]:
-        return ['windows',
-                'Classes'
-                ]
+        return []
 
     def compilerOptions(self) -> list[str]:
         return []
@@ -29,6 +27,8 @@ program injector;
 
 uses
     Classes,windows,sysutils;
+
+{imports}
 
 {codeblocks}
 
