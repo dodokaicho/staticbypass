@@ -28,7 +28,7 @@ program injector;
 {{$mode delphi}}
 
 uses
-    Classes,windows;
+    Classes,windows,sysutils;
 
 {codeblocks}
 

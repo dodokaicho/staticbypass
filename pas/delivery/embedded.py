@@ -22,11 +22,9 @@ class embedded:
 
     def codeblock(self) -> str:
         return f"""
-type ArrBytes = array of Byte;
-
-function {self.name}: ArrBytes;
+function {self.name}: TBytes;
 var
-    obfuscated: Arrbytes;
+    obfuscated: TBytes;
 
 begin
     {self.shellcode}
