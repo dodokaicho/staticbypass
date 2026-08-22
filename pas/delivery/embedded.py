@@ -1,0 +1,35 @@
+import random
+import string
+from pas.utils.formatters import *
+
+class embedded:
+
+    def __init__(self, shellcode: str | bytes | list[str], arguments: dict) -> None:
+        self.name = ''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(16))
+        shellcodeType = type(shellcode).__name__
+        if shellcodeType == "bytes":
+            self.type = f'[]byte'
+        self.shellcode = globals()[f'{type(shellcode).__name__}_to_pas'](shellcode, 'obfuscated')
+
+    def imports(self) -> list[str]:
+        return []
+
+    def compilerOptions(self) -> list[str]:
+        return []
+
+    def transformer(self, shellcodestring: str) -> str:
+        return shellcodestring.format(shellcode=f'{self.name}()')
+
+    def codeblock(self) -> str:
+        return f"""
+type ArrBytes = array of Byte;
+
+function {self.name}: ArrBytes;
+var
+    obfuscated: Arrbytes;
+
+begin
+    {self.shellcode}
+    Result := obfuscated;
+end;
+"""

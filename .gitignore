@@ -13,3 +13,5 @@ output.txt
 go.mod
 go.sum
 output.go
+output.pas
+output.o
