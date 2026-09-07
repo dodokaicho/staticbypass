@@ -16,6 +16,7 @@ curl -L https://dot.net/v1/dotnet-install.sh | bash
 # Install rustup
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 source "$HOME/.cargo/env"
+rustup default stable
 rustup target add x86_64-pc-windows-gnu
 
 # Install nim
