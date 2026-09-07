@@ -1,7 +1,7 @@
 import random
 import string
 
-class vfilesystem:
+class filecheck:
 
     def __init__(self, arguments: dict) -> None:
         self.name = ''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(16))
