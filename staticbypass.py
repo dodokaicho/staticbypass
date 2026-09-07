@@ -88,12 +88,13 @@ def main() -> None:
 
     # Add guardrails
     if args.guardrails:
-        guardrail, arguments = parse_module_args(args.guardrails)
-        guardrailObject = load_module(args.language, 'guardrails', guardrail)(arguments)
-        transformers = guardrailObject.transformer(transformers)
-        codeblocks += guardrailObject.codeblock()
-        imports += guardrailObject.imports()
-        compilerOptions += guardrailObject.compilerOptions()
+        for guardrail in args.guardrails:
+            guardrailItem, arguments = parse_module_args(guardrails)
+            guardrailObject = load_module(args.language, 'guardrails', guardrailItem)(arguments)
+            transformers = guardrailObject.transformer(transformers)
+            codeblocks += guardrailObject.codeblock()
+            imports += guardrailObject.imports()
+            compilerOptions += guardrailObject.compilerOptions()
 
     deliveryItem, arguments = parse_module_args(args.delivery)
     deliveryObject = load_module(args.language, 'delivery', deliveryItem)(shellcode, arguments)

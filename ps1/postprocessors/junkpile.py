@@ -118,6 +118,9 @@ used_vars = set()
 
 class junkpile:
 
+    def __init__(self, arguments):
+        pass
+
     # Remove any contained comments before processing, this keeps the overall generated codebase down as much as possible
     def strip_comments(self, ps_code):
         # standard comment blcoks

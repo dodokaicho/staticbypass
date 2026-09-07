@@ -3,7 +3,7 @@ import random
 import os
 
 class obfell:
-    def __init__(self, amount_of_arrays = 32, array_name_length = 32, number_of_operations = 1):
+    def __init__(self, arguments):
         """Initializes ScriptObfuscator
 
         Args:
@@ -19,9 +19,9 @@ class obfell:
             list_of_chars (list[str]): List of all characters for generating arrays
             original_script (str): Content of original (non-obfuscated) script
         """
-        self.amount_of_arrays = amount_of_arrays
-        self.array_name_length = array_name_length
-        self.number_of_operations = number_of_operations
+        self.amount_of_arrays = 32
+        self.array_name_length = 32
+        self.number_of_operations = 1
         self.created_arrays : dict[str, list[str]] = {}
         self.list_of_chars : list[str]= [char for char in string.printable]
         self.original_script : str = ""
