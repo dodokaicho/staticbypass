@@ -17,7 +17,7 @@ class IPv4Obfuscate:
         for i in range(0, len(decoded), 4):
             chunk = decoded[i:i+4]
             if len(chunk) < 4:
-                chunk = chunk + ([b"\x90"] * (4 - len(chunk)))
+                chunk = chunk + (b"\x90" * (4 - len(chunk)))
             encoded.append('.'.join([f'{chunk[n]}' for n in range(0, 4)]))
         return encoded
 
