@@ -1,14 +1,12 @@
 class spawnandinject:
     def __init__(self, arguments):
+        self.memoryPermission = 'PAGE_EXECUTE_READ'
+        self.target = 'C:\\\\windows\\\\system32\\\\svchost.exe'
         if 'perm' in arguments:
             if arguments['perm'] == 'rwx':
                 self.memoryPermission = 'PAGE_EXECUTE_READWRITE'
-            else:
-                self.memoryPermission = 'PAGE_EXECUTE_READ'
         if 'target' in arguments:
             self.target = arguments['target'].replace('\\','\\\\')
-        else:
-            self.target = 'C:\\\\windows\\\\system32\\\\svchost.exe'
 
     def imports(self) -> list[str]:
         return ['Classes', 'windows', 'sysutils']
