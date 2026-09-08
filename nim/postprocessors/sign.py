@@ -13,6 +13,8 @@ from cryptography.hazmat.primitives import serialization
 class sign:
 
     def __init__(self, arguments: dict) -> None:
+        self.keyfile = None
+        self.certfile = None
         if 'keyfile' in arguments:
             self.keyfile = arguments['keyfile']
 
@@ -70,11 +72,10 @@ class sign:
             with os.fdopen(certtf, "wb") as f:
                 f.write(certificate.public_bytes(serialization.Encoding.PEM))
 
-            self.certfile = keyfilename
-            self.keyfile = certfilename
+            self.keyfile = keyfilename
+            self.certfile = certfilename
 
     def apply(self, outfile: str) -> None:
-
         if platform.system() == 'Linux':
             result = subprocess.run(['osslsigncode', 'sign', '-certs', self.certfile, '-key', self.keyfile, '-in', outfile, '-out', f'{tempfile.gettempdir()}/{outfile}' ])
             shutil.move(f'{tempfile.gettempdir()}/{outfile}', outfile)
