@@ -1,6 +1,6 @@
 import random
 import string
-from c.utils.formatters import *
+from ts.utils.formatters import *
 import time
 
 class DictObfuscate:
@@ -21,7 +21,7 @@ class DictObfuscate:
             self.dictdecode[word] = i
 
     def imports(self) -> list[str]:
-        return ["#include <string.h>"]
+        return []
 
     def compilerOptions(self) -> list[str]:
         return []
@@ -39,45 +39,13 @@ class DictObfuscate:
 
     def codeblock(self) -> str:
         return f"""
-static struct {{ 
-    char *word; 
-    int value; 
-}} dictionary[256];
-
-static unsigned idx(char *word) {{
-    unsigned hash = 5381;
-    for (char *p = word; *p; p++) {{
-        hash = hash * 33 + *p;
+function {self.name}(encoded: string): Uint8Array {{
+    {dict_to_ts(self.dictdecode, 'dictionary')}
+    const words: string[] = encoded.split(" "); 
+    let decoded: Uint8Array = new Uint8Array(words.length); 
+    for (let i: number = 0; i < words.length; i++) {{
+        decoded[i] = dictionary[words[i]];
     }}
-    for (hash %= 256; dictionary[hash].word && strcmp(dictionary[hash].word, word); hash = (hash + 1) % 256);
-    return hash;
-}}
-
-void set(char *word, int value) {{ 
-    unsigned i = idx(word); 
-    dictionary[i].word = word; 
-    dictionary[i].value = value; 
-}}
-
-int get(char *word) {{ 
-    unsigned i = idx(word); 
-    return dictionary[i].word ? dictionary[i].value : 0; 
-}}
-
-unsigned char * {self.name}(const unsigned char* encoded)
-{{
-    int size = {self.size};
-    unsigned char *buffer = strdup(encoded);
-    unsigned char * out = malloc(size);
-    int i = 0;
-    {dict_to_c(self.dictdecode, 'dictionary')}
-    char * currWord = strtok(buffer, " ");
-    while (currWord != NULL){{
-        out[i] = get(currWord);
-        i++;        
-        currWord = strtok(NULL, " ");
-    }}
-
-    return out;
+    return decoded;
 }}
 """
