@@ -1,3 +1,5 @@
+from string import Template
+
 class processstomp:
     def __init__(self, arguments):
         pass
@@ -10,8 +12,8 @@ class processstomp:
     def compilerOptions(self) -> list[str]:
         return ["golang.org/x/sys/windows"]
 
-    def template(self, imports, codeblocks, transformers, shellcodeSize) -> str:
-        return f"""
+    def template(self) -> str:
+        return """
 package main
 
 import (

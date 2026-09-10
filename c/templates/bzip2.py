@@ -1,3 +1,5 @@
+from string import Template
+
 class bzip2:
     def __init__(self, arguments):
         pass
@@ -11,8 +13,8 @@ class bzip2:
     def compilerOptions(self) -> list[str]:
         return []
 
-    def template(self, imports, codeblocks, transformers, shellcodeSize) -> str:
-        return f"""
+    def template(self) -> str:
+        return """
 {imports}
 #ifndef _BZLIB_H
 #define _BZLIB_H

@@ -2,6 +2,8 @@ import tempfile
 import os
 import subprocess
 
+from string import Template
+
 class hellsgate:
     def __init__(self, arguments) -> None:
         fd, file_path = tempfile.mkstemp()
@@ -48,8 +50,8 @@ HellDescent:
                 '-Os', 
                 '-IInclude']
 
-    def template(self, imports, codeblocks, transformers, shellcodeSize) -> str:
-        return f"""
+    def template(self) -> str:
+        return """
 
 {imports}
 

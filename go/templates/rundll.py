@@ -1,6 +1,8 @@
 import tempfile
 import os
 
+from string import Template
+
 class rundll:
     def __init__(self, arguments):
         pass
@@ -53,8 +55,8 @@ BOOL WINAPI DllMain(
     def compilerOptions(self) -> list[str]:
         return []
 
-    def template(self, imports, codeblocks, transformers, shellcodeSize) -> str:
-        return f"""
+    def template(self) -> str:
+        return """
 package main
 
 import "C"

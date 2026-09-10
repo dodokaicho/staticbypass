@@ -1,3 +1,5 @@
+from string import Template
+
 class shellcoderunner:
     def __init__(self, arguments):
         pass
@@ -14,8 +16,8 @@ class shellcoderunner:
     def compilerOptions(self) -> list[str]:
         return ['windows-sys = { version = "0.61.2", features = ["Win32_System_Memory", "Win32_System_Threading", "Win32_Security", "Win32_Foundation"] }']
 
-    def template(self, imports, codeblocks, transformers, shellcodeSize) -> str:
-        return f"""
+    def template(self) -> str:
+        return """
 {imports}
 
 {codeblocks}

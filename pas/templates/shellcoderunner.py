@@ -1,3 +1,5 @@
+from string import Template
+
 class shellcoderunner:
     def __init__(self, arguments):
         pass
@@ -8,8 +10,8 @@ class shellcoderunner:
     def compilerOptions(self) -> list[str]:
         return []
 
-    def template(self, imports, codeblocks, transformers, shellcodeSize) -> str:
-        return f"""
+    def template(self) -> str:
+        return """
 {{
     this one is part of repo published on github under the name of Offensive Pascal
     Pascal is a great and still up to date :)

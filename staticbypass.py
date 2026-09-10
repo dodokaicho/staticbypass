@@ -103,8 +103,6 @@ def main() -> None:
     imports += deliveryObject.imports()
     compilerOptions += deliveryObject.compilerOptions()
 
-    compilerOptions = list(dict.fromkeys(compilerOptions))
-
     # Load template options
     template, arguments = parse_module_args(args.template)
     templateObject = load_module(args.language, 'templates', template)(arguments)
@@ -117,9 +115,10 @@ def main() -> None:
         imports = '\n'.join([f'"{x}"' for x in list(dict.fromkeys(imports))])
     else:
         imports = '\n'.join(list(dict.fromkeys(imports)))
-    formattedCode = templateObject.template(imports, codeblocks, transformers, shellcodeSize)
+    formattedCode = templateObject.template().format(imports=imports, codeblocks=codeblocks, transformers=transformers, shellcodeSize=shellcodeSize)
 
     compiler = importlib.import_module(f'{args.language}.utils.compiler')
+    compilerOptions = list(dict.fromkeys(compilerOptions))
     outfile = compiler.compile(formattedCode, args.output, compilerOptions)
 
     if args.postprocessors:

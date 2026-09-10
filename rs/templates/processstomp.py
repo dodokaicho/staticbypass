@@ -1,3 +1,5 @@
+from string import Template
+
 class processstomp:
     def __init__(self, arguments):
         pass
@@ -25,8 +27,8 @@ class processstomp:
     def compilerOptions(self) -> list[str]:
         return ['windows-sys = { version = "0.61.2", features = ["Win32_System_Memory", "Win32_System_Threading", "Win32_Security", "Win32_Foundation", "Win32_System_Diagnostics_Debug", "Win32_System_Kernel", "Wdk_System", "Wdk_System_Threading"] }']
 
-    def template(self, imports, codeblocks, transformers, shellcodeSize) -> str:
-        return f"""
+    def template(self) -> str:
+        return """
 {imports}
 
 {codeblocks}
