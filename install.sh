@@ -32,3 +32,9 @@ unzip /tmp/$FPCVER.source.zip -d /tmp
 cd /tmp/$FPCVER/
 sudo make crossinstall OS_TARGET=win64 CPU_TARGET=x86_64 INSTALL_PREFIX=/usr/
 sudo fpcmkcfg -p -d "basepath=/usr/lib/fpc/$FPCVER" -o /etc/fpc.cfg
+
+# Install bun
+curl -fsSL https://bun.com/install | bash
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+bun add @bun-win32/kernel32
