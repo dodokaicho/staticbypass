@@ -24,7 +24,7 @@ class DictObfuscate:
         return ["#include <string.h>"]
 
     def compilerOptions(self) -> list[str]:
-        return ['-I/usr/include/uthash']
+        return []
 
     def obfuscate(self, decoded: bytes) -> str:
         self.size = len(decoded)

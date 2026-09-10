@@ -15,17 +15,13 @@ class processstomp:
     def compilerOptions(self) -> list[str]:
         return []
 
+    def codeblocks(self) -> str:
+        return """
+NTSTATUS (NTAPI *pNtQueryInformationProcess)(HANDLE, /*enum _PROCESSINFOCLASS*/DWORD, PVOID, ULONG, PULONG) = NULL;
+"""
+
     def template(self) -> str:
         return Template("""
-{imports}
-
-{codeblocks}
-
-NTSTATUS (NTAPI *pNtQueryInformationProcess)(HANDLE, /*enum _PROCESSINFOCLASS*/DWORD, PVOID, ULONG, PULONG) = NULL;
-
-int main()
-{{
-    
     {transformers}
 
     pNtQueryInformationProcess = (NTSTATUS(NTAPI*)(HANDLE, /*enum _PROCESSINFOCLASS*/DWORD, PVOID, ULONG, PULONG))
@@ -91,6 +87,4 @@ int main()
     CloseHandle(pi.hThread);
     CloseHandle(pi.hProcess);
 
-    return 0;
-}}
 """).substitute(target=self.target)

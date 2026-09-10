@@ -15,33 +15,13 @@ class spawnandinject:
 
     def compilerOptions(self) -> list[str]:
         return []
+    
+    def codeblocks(self) -> str:
+        return """"""
 
     def template(self) -> str:
         return Template("""
-{{
-    this one is part of repo published on github under the name of Offensive Pascal
-    Pascal is a great and still up to date :)
-    these projects can be compilied using FreePascal (FPC)
-    or Delphi
-
-    author : @zux0x3a
-    site :   0xsp.com / ired.dev
-
-    https://github.com/0xsp-SRD/OffensivePascal
-
-}}
-
-program output;
-
-{{$codepage UTF8}}
-{{$mode delphi}}
-
-uses {imports};
-
-{codeblocks}
-
 procedure main;
-
 var
     pi: TProcessInformation;
     si: TStartupInfo;
@@ -67,8 +47,4 @@ begin
 
     WaitForSingleObject(hThread, 500);
 end;
-
-begin
-    main;
-end.
 """).substitute(target=self.target, memoryPermission=self.memoryPermission)

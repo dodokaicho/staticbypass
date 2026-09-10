@@ -20,14 +20,11 @@ class processinject:
     def compilerOptions(self) -> list[str]:
         return []
 
+    def codeblocks(self) -> str:
+        return """"""
+
     def template(self) -> str:
         return Template("""
-{imports}
-
-{codeblocks}
-
-int main(void) {{
-    
     int pid = 0;
     HANDLE hProc = NULL;
 
@@ -75,5 +72,4 @@ int main(void) {{
 
     CloseHandle(hProc);
     return 0;
-}}
 """).substitute(target=self.target, memoryPermission=self.memoryPermission)

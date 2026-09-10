@@ -31,6 +31,7 @@ def main() -> None:
     parser.add_argument('-b', "--preprocessors", type=str, nargs='*', required=False, help='Preprocessors modify the shellcode but are self decoding.')
     parser.add_argument('-a', "--postprocessors", type=str, nargs='*', required=False, help='Postprocessors obfuscate the resulting exe or script, e.g. packers')
     parser.add_argument('-d', "--delivery", type=str, required=False, default="embedded", help='Delivery defines where the obfuscated shellcode is retrieved')
+    parser.add_argument('-w', "--wrapper", type=str, required=False, default="main", help='Wrap execution template in other code for obfuscation')
     parser.add_argument('-o', "--output", type=str, required=False, default="output", help='Output file name')
     args = parser.parse_args()
 
@@ -107,7 +108,17 @@ def main() -> None:
     template, arguments = parse_module_args(args.template)
     templateObject = load_module(args.language, 'templates', template)(arguments)
     compilerOptions += templateObject.compilerOptions()
+    codeblocks = templateObject.codeblocks() + codeblocks
     imports = templateObject.imports() + imports
+
+    formattedTemplate = templateObject.template().format(transformers=transformers, shellcodeSize=shellcodeSize)
+
+    # Load wrapper
+    wrapper, arguments = parse_module_args(args.wrapper)
+    wrapperObject = load_module(args.language, 'wrappers', wrapper)(arguments)
+    compilerOptions += wrapperObject.compilerOptions()
+    imports = wrapperObject.imports() + imports
+
     # Remove duplicates while retaining order
     if args.language == 'pas':
         imports = ','.join(list(dict.fromkeys(imports)))
@@ -115,7 +126,9 @@ def main() -> None:
         imports = '\n'.join([f'"{x}"' for x in list(dict.fromkeys(imports))])
     else:
         imports = '\n'.join(list(dict.fromkeys(imports)))
-    formattedCode = templateObject.template().format(imports=imports, codeblocks=codeblocks, transformers=transformers, shellcodeSize=shellcodeSize)
+
+
+    formattedCode = wrapperObject.template().format(imports=imports, codeblocks=codeblocks, template=formattedTemplate)
 
     compiler = importlib.import_module(f'{args.language}.utils.compiler')
     compilerOptions = list(dict.fromkeys(compilerOptions))

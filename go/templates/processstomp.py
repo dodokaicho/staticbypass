@@ -12,19 +12,11 @@ class processstomp:
     def compilerOptions(self) -> list[str]:
         return ["golang.org/x/sys/windows"]
 
+    def codeblocks(self) -> str:
+        return """"""
+
     def template(self) -> str:
         return """
-package main
-
-import (
-{imports}
-)
-
-{codeblocks}
-
-func main() {{
-
-    
     {transformers}
 
 	// Load DLLs and Procedures
@@ -227,5 +219,4 @@ func main() {{
 	windows.CloseHandle(procInfo.Process)
 
 	windows.CloseHandle(procInfo.Thread)
-}}
 """

