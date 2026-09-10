@@ -21,3 +21,4 @@ bin/ResourceHacker.ini
 output.dll
 dllmain.c
 output.h
+output.ts
